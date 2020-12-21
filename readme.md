@@ -1,1 +1,1 @@
-run with: `kotlinc -script Challenge[x].kts`
+`kotlinc -script Challenge[x].kts`

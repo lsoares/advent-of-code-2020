@@ -17,12 +17,11 @@ fun solveTriple(input: List<Int>) = input
     .first { it.first + it.second + it.third == 2020 }
     .let { it.first * it.second * it.third }
 
-
 val testInput = listOf(1721, 979, 366, 299, 675, 1456)
 check(514579 == solvePair(testInput))
 check(241861950 == solveTriple(testInput))
 
-val path = Paths.get("").toAbsolutePath().toString() + "/input1.txt"
+val path = "${Paths.get("").toAbsolutePath()}/input1.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map { it.toInt() }.toList()
 
 println(solvePair(input))
