@@ -2,17 +2,18 @@ import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.Scanner
+import java.net.URL
 
 fun solvePair(input: List<Int>) = input
-    .cartesianProduct(input)
+    .cartesianProduct()
     .first { it.first + it.second == 2020 }
     .let { it.first * it.second }
 
-fun <S> List<S>.cartesianProduct(other: List<S>): List<Pair<S, S>> =
-    flatMap { List(other.size) { i -> Pair(it, other[i]) } }
+fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
+    flatMap { j -> List(size) { i -> Pair(j, this[i]) } }
 
 fun solveTriple(input: List<Int>) = input
-    .cartesianProduct(input)
+    .cartesianProduct()
     .flatMap { pair -> List(input.size) { Triple(pair.first, pair.second, input[it]) } }
     .first { it.first + it.second + it.third == 2020 }
     .let { it.first * it.second * it.third }
