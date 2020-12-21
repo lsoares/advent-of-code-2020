@@ -3,10 +3,12 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 
+// part 1
 fun checkValidity(input: List<Pair<Policy, String>>, validator: (Pair<Policy, String>) -> Boolean) =
     input.count { validator(it) }
 
-fun validate1(row: Pair<Policy, String>) = row.second.count { row.first.arg3 == it } in row.first.arg1..row.first.arg2
+fun validate1(row: Pair<Policy, String>) =
+    row.second.count { row.first.char == it } in row.first.int1..row.first.int2
 
 val testInput = listOf(
     Policy(1, 3, 'a') to "abcde",
@@ -15,20 +17,26 @@ val testInput = listOf(
 )
 check(2 == checkValidity(testInput, ::validate1))
 
-data class Policy(val arg1: Int, val arg2: Int, val arg3: Char)
+data class Policy(val int1: Int, val int2: Int, val char: Char)
 
 val path = "${Paths.get("").toAbsolutePath()}/input2.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence()
     .map {
         val row = it.split(" ")
         Policy(
-            arg1 = row[0].split("-").first().toInt(),
-            arg2 = row[0].split("-").last().toInt(),
-            arg3 = row[1].first()
+            int1 = row[0].split("-").first().toInt(),
+            int2 = row[0].split("-").last().toInt(),
+            char = row[1].first()
         ) to row.last()
     }
     .toList()
 
 println(checkValidity(input, ::validate1))
 
-//check(1 == checkValidity2(testInput))
+// part 2
+fun validate2(row: Pair<Policy, String>) =
+    (row.second[row.first.int1 - 1] == row.first.char) xor (row.second[row.first.int2 - 1] == row.first.char)
+
+check(1 == checkValidity(testInput, ::validate2))
+
+println(checkValidity(input, ::validate2))
