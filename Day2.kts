@@ -4,18 +4,19 @@ import java.nio.file.Paths
 import java.util.*
 
 // part 1
-fun checkValidity(input: List<Pair<Policy, String>>, validator: (Pair<Policy, String>) -> Boolean) =
-    input.count { validator(it) }
-
-fun validate1(row: Pair<Policy, String>) =
-    row.second.count { row.first.char == it } in row.first.int1..row.first.int2
-
 val testInput = listOf(
     Policy(1, 3, 'a') to "abcde",
     Policy(1, 3, 'b') to "cdefg",
     Policy(2, 9, 'c') to "ccccccccc"
 )
 check(2 == checkValidity(testInput, ::validate1))
+
+fun checkValidity(input: List<Pair<Policy, String>>, validator: (Pair<Policy, String>) -> Boolean) =
+    input.count { validator(it) }
+
+fun validate1(row: Pair<Policy, String>) =
+    row.second.count { row.first.char == it } in row.first.int1..row.first.int2
+
 
 data class Policy(val int1: Int, val int2: Int, val char: Char)
 
@@ -34,9 +35,9 @@ val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence()
 println(checkValidity(input, ::validate1))
 
 // part 2
+check(1 == checkValidity(testInput, ::validate2))
+
 fun validate2(row: Pair<Policy, String>) =
     (row.second[row.first.int1 - 1] == row.first.char) xor (row.second[row.first.int2 - 1] == row.first.char)
-
-check(1 == checkValidity(testInput, ::validate2))
 
 println(checkValidity(input, ::validate2))
