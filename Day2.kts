@@ -17,10 +17,9 @@ fun checkValidity(input: List<Pair<Policy, String>>, validator: (Pair<Policy, St
 fun validate1(row: Pair<Policy, String>) =
     row.second.count { row.first.char == it } in row.first.int1..row.first.int2
 
-
 data class Policy(val int1: Int, val int2: Int, val char: Char)
 
-val path = "${Paths.get("").toAbsolutePath()}/input2.txt"
+val path = "${Paths.get("").toAbsolutePath()}/input/2.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence()
     .map {
         val row = it.split(" ")
