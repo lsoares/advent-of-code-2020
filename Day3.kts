@@ -30,9 +30,7 @@ println(countTrees(input))
 check(336L == countTreesMultiplePredicates(basicInput))
 
 fun countTrees(input: List<String>, moveRight: Int, moveDown: Int) = input
-    .withIndex()
-    .filter { it.index % moveDown == 0 }
-    .map { it.value }
+    .filterIndexed { index, _ -> index % moveDown == 0 }
     .withIndex()
     .count { it.value[it.index * moveRight % it.value.length] == '#' }
     .toLong()
