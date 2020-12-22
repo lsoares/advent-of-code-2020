@@ -9,9 +9,10 @@ val sampleInput = sequenceOf("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFR
 
 check(820 == findHighestSeatId(sampleInput))
 
-fun findHighestSeatId(input: Sequence<String>) = input.map(::convert).maxOrNull()
+fun findHighestSeatId(input: Sequence<String>) = input.map(::toBoardingPassId).maxOrNull()
 
-fun convert(boardingSpec: String) = convertPart(boardingSpec.dropLast(3)) * 8 + convertPart(boardingSpec.drop(7))
+fun toBoardingPassId(boardingSpec: String) =
+    convertPart(boardingSpec.dropLast(3)) * 8 + convertPart(boardingSpec.drop(7))
 
 fun convertPart(boardingPass: String) = boardingPass
     .replace(Regex("[FL]"), "0")
@@ -22,3 +23,15 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .asSequence()
 
 println(findHighestSeatId(loadFile()))
+
+// part 2
+fun findMissingBoardingId(input: Sequence<String>) = input
+    .map(::toBoardingPassId)
+    .toList()
+    .sorted()
+    .windowed(2)
+    .map { it.first() to it[1] - it[0] }
+    .first { it.second != 1 }
+    .first + 1
+
+println(findMissingBoardingId(loadFile()))
