@@ -18,7 +18,7 @@ val basicInput = """
 .#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#
 """.trim().split("\n")
 
-check(7L == countTrees(basicInput))
+check(7 == countTrees(basicInput))
 
 fun countTrees(input: List<String>) = countTrees(input, 3, 1)
 
@@ -33,13 +33,13 @@ fun countTrees(input: List<String>, moveRight: Int, moveDown: Int) = input
     .filterIndexed { index, _ -> index % moveDown == 0 }
     .withIndex()
     .count { it.value[it.index * moveRight % it.value.length] == '#' }
-    .toLong()
 
-fun countTreesMultiplePredicates(input: List<String>) =
-    countTrees(input, 1, 1) *
+fun countTreesMultiplePredicates(input: List<String>): Long {
+    return countTrees(input, 1, 1) *
             countTrees(input, 3, 1) *
             countTrees(input, 5, 1) *
             countTrees(input, 7, 1) *
-            countTrees(input, 1, 2)
+            countTrees(input, 1, 2).toLong()
+}
 
 println(countTreesMultiplePredicates(input))
