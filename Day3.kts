@@ -34,12 +34,9 @@ fun countTrees(input: List<String>, moveRight: Int, moveDown: Int) = input
     .filterIndexed { index, value -> value[index * moveRight % value.length] == '#' }
     .size
 
-fun countTreesMultiplePredicates(input: List<String>): Long {
-    return countTrees(input, 1, 1) *
-            countTrees(input, 3, 1) *
-            countTrees(input, 5, 1) *
-            countTrees(input, 7, 1) *
-            countTrees(input, 1, 2).toLong()
-}
+fun countTreesMultiplePredicates(input: List<String>) =
+    setOf(1 to 1, 3 to 1, 5 to 1, 7 to 1, 1 to 2)
+        .map { countTrees(input, it.first, it.second).toLong() }
+        .reduce(Long::times)
 
 println(countTreesMultiplePredicates(input))
