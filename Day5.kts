@@ -27,3 +27,6 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .asSequence()
 
 println(findHighestSeatId(loadFile()))
+
+// part 2
+
