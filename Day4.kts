@@ -16,7 +16,7 @@ ecl:brn pid:760753108 byr:1931
 hgt:179cm
 
 hcl:#cfa07d eyr:2025 pid:166559648
-iyr:2011 ecl:brn hgt:59in""".trim().split("\n\n").map(::toPassport)
+iyr:2011 ecl:brn hgt:59in""".trim().split("\n\n").map(::toPassport).asSequence()
 
 fun toPassport(input: String) = input
     .split("\\s".toRegex())
@@ -25,12 +25,12 @@ fun toPassport(input: String) = input
 
 check(2 == countValidPassports(sampleInput))
 
-fun countValidPassports(input: List<Map<String, String>>) = input.count(::isValidPassport)
+fun countValidPassports(input: Sequence<Map<String, String>>) = input.count(::isValidPassport)
 
 fun isValidPassport(passport: Map<String, String>) =
     setOf("ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt").all(passport::containsKey)
 
 val path = "${Paths.get("").toAbsolutePath()}/input/4.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter("\n\n").asSequence().toList().map(::toPassport)
+val input = Scanner(FileInputStream(File(path))).useDelimiter("\n\n").asSequence().map(::toPassport)
 
 println(countValidPassports(input))
