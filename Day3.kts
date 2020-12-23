@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import java.util.*
 
 // part 1
-val basicInput = listOf(
+val sampleInput = listOf(
     "..##.........##.........##.........##.........##.........##.......",
     "#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..",
     ".#....#..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.",
@@ -18,7 +18,7 @@ val basicInput = listOf(
     ".#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#"
 )
 
-check(7 == countTrees(basicInput))
+check(7 == countTrees(sampleInput))
 
 fun countTrees(input: List<String>) = countTrees(input, 3, 1)
 
@@ -27,7 +27,7 @@ val input = Scanner(FileInputStream(File(path))).asSequence().toList()
 println(countTrees(input))
 
 // part 2
-check(336L == countTreesMultiplePredicates(basicInput))
+check(336L == countTreesMultiplePredicates(sampleInput))
 
 fun countTrees(input: List<String>, moveRight: Int, moveDown: Int) = input
     .filterIndexed { index, _ -> index % moveDown == 0 }
