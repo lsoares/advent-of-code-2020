@@ -23,3 +23,21 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .map { it.split("\n") }
 
 println(countAnswers(loadFile()))
+
+// part 2
+check(6 == countAnswers2(sampleInput))
+
+fun countAnswers2(answers: Sequence<List<String>>) =
+    answers.sumBy { groupAnswers ->
+        countAnswer(groupAnswers)
+            .count() { it.value == groupAnswers.size }
+    }
+
+fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
+    groupAnswers.fold(mapOf<Char, Int>()) { acc, ans ->
+        acc + ans.map {
+            it to (acc.getOrDefault(it, 0) + 1)
+        }
+    }
+
+println(countAnswers2(loadFile()))

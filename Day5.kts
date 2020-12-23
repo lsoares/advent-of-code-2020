@@ -5,7 +5,6 @@ import java.nio.file.Paths
 import java.util.*
 
 // part 1
-
 check(820 == findHighestSeatId(sequenceOf("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL")))
 
 fun findHighestSeatId(input: Sequence<String>) = input.map(::toBoardingPassId).maxOrNull()
