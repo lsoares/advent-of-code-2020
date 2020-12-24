@@ -3,7 +3,7 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 
-// part 1
+// --- Part One ---
 val sampleInput = sequenceOf(
     listOf("abc"),
     listOf("a", "b", "c"),
@@ -22,15 +22,14 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .asSequence()
     .map { it.split("\n") }
 
-println(countAnswers(loadFile()))
+println(countAnswers(loadFile())) // 6633
 
-// part 2
+// --- Part Two ---
 check(6 == countAnswers2(sampleInput))
 
 fun countAnswers2(answers: Sequence<List<String>>) =
     answers.sumBy { groupAnswers ->
-        countAnswer(groupAnswers)
-            .count() { it.value == groupAnswers.size }
+        countAnswer(groupAnswers).count() { it.value == groupAnswers.size }
     }
 
 fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
@@ -40,4 +39,4 @@ fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
         }
     }
 
-println(countAnswers2(loadFile()))
+println(countAnswers2(loadFile())) // 3202

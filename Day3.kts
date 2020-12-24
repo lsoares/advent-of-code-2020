@@ -3,7 +3,7 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 
-// part 1
+// --- Part One ---
 val sampleInput = listOf(
     "..##.........##.........##.........##.........##.........##.......",
     "#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..",
@@ -24,9 +24,10 @@ fun countTrees(input: List<String>) = countTrees(input, 3, 1)
 
 val path = "${Paths.get("").toAbsolutePath()}/input/3.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList()
-println(countTrees(input))
 
-// part 2
+println(countTrees(input)) // 247
+
+// --- Part Two ---
 check(336L == countTreesMultiplePredicates(sampleInput))
 
 fun countTrees(input: List<String>, moveRight: Int, moveDown: Int) = input
@@ -39,4 +40,4 @@ fun countTreesMultiplePredicates(input: List<String>) =
         .map { countTrees(input, it.first, it.second).toLong() }
         .reduce(Long::times)
 
-println(countTreesMultiplePredicates(input))
+println(countTreesMultiplePredicates(input)) // 2983070376

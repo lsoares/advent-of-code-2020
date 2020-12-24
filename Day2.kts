@@ -3,7 +3,7 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 
-// part 1
+// --- Part One ---
 val sampleInput = listOf(
     Policy(1, 3, 'a') to "abcde",
     Policy(1, 3, 'b') to "cdefg",
@@ -30,12 +30,12 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
         ) to row.last()
     }
 
-println(checkValidity(loadFile(), ::validate1))
+println(checkValidity(loadFile(), ::validate1)) // 483
 
-// part 2
+// --- Part Two ---
 check(1 == checkValidity(sampleInput.asSequence(), ::validate2))
 
 fun validate2(row: Pair<Policy, String>) =
     (row.second[row.first.int1 - 1] == row.first.char) xor (row.second[row.first.int2 - 1] == row.first.char)
 
-println(checkValidity(loadFile(), ::validate2))
+println(checkValidity(loadFile(), ::validate2)) // 482

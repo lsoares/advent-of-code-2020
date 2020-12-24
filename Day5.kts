@@ -4,7 +4,7 @@ import java.lang.Integer.parseInt
 import java.nio.file.Paths
 import java.util.*
 
-// part 1
+// --- Part One ---
 check(820 == findHighestSeatId(sequenceOf("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL")))
 
 fun findHighestSeatId(input: Sequence<String>) = input.map(::toBoardingPassId).maxOrNull()
@@ -20,9 +20,9 @@ fun convertPart(boardingPass: String) = boardingPass
 fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/5.txt")))
     .asSequence()
 
-println(findHighestSeatId(loadFile()))
+println(findHighestSeatId(loadFile())) // 806
 
-// part 2
+// --- Part Two ---
 fun findMissingBoardingId(input: Sequence<String>) = input
     .map(::toBoardingPassId)
     .toList()
@@ -32,4 +32,4 @@ fun findMissingBoardingId(input: Sequence<String>) = input
     .first { it.second != 1 }
     .first + 1
 
-println(findMissingBoardingId(loadFile()))
+println(findMissingBoardingId(loadFile())) // 562

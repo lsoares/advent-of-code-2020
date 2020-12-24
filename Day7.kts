@@ -53,4 +53,4 @@ check(4 == countPossibleBagColors(sampleInput, "shiny gold"))
 val path = "${Paths.get("").toAbsolutePath()}/input/7.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence().toList()
 
-println(countPossibleBagColors(input, "shiny gold"))
+println(countPossibleBagColors(input, "shiny gold")) // 101

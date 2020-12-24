@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import java.util.Scanner
 import java.net.URL
 
-// part 1
+// --- Part One ---
 val testInput = listOf(1721, 979, 366, 299, 675, 1456)
 check(514579 == solvePair(testInput))
 
@@ -18,9 +18,10 @@ fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
 
 val path = "${Paths.get("").toAbsolutePath()}/input/1.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map { it.toInt() }.toList()
-println(solvePair(input))
 
-// part 2
+println(solvePair(input)) // 440979
+
+// --- Part Two ---
 check(241861950 == solveTriple(testInput))
 
 fun solveTriple(input: List<Int>) = input
@@ -29,4 +30,4 @@ fun solveTriple(input: List<Int>) = input
     .first { it.first + it.second + it.third == 2020 }
     .let { it.first * it.second * it.third }
 
-println(solveTriple(input))
+println(solveTriple(input)) // 82498112
