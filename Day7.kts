@@ -67,5 +67,5 @@ fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): In
 
 check(32 == countBags(sampleInput, "shiny gold"))
 
-println(countBags(input, "shiny gold"))
+println(countBags(input, "shiny gold")) // 108636
 
