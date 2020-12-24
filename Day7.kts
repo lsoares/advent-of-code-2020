@@ -15,37 +15,30 @@ val sampleInput = listOf(
     "dotted black bags contain no other bags.",
 )
 
-fun buildInverted(sentences: List<String>): Map<String, List<String>> {
-    val entries = mutableMapOf<String, MutableList<String>>()
-    sentences.forEach {
-        it.removeSuffix(".")
+fun buildRules(sentences: List<String>): Map<String, Map<String, Int>> =
+    sentences.map { sentence ->
+        sentence.removeSuffix(".")
             .replace(" bags?".toRegex(), "")
             .replace("no other", "0")
             .split(" contain ", ", ")
-            .let { parts ->
-                val parent = parts.first().replace("\\d ".toRegex(), "")
-                parts.drop(1).forEach() {
-                    val entry = it.replace("\\d ".toRegex(), "")
-                    entries.putIfAbsent(entry, mutableListOf())
-                    entries.get(entry)?.add(parent)
-                }
+            .let { partsStr ->
+                partsStr.first() to partsStr.drop(1).mapNotNull {
+                    it.takeWhile(Char::isDigit).toInt().takeUnless { it == 0 }?.let { count ->
+                        it.dropWhile(Char::isDigit).trim() to count
+                    }
+                }.toMap()
             }
-    }
-    return entries
-}
+    }.toMap()
+
+fun canHoldColor(rules: Map<String, Map<String, Int>>, currentNode: String, bagColor: String, level: Int = 0): Boolean =
+    bagColor == currentNode && level > 0 ||
+            (rules[currentNode]?.entries?.any { canHoldColor(rules, it.key, bagColor, level + 1) } ?: false)
 
 fun countPossibleBagColors(input: List<String>, bagColor: String): Int {
-    val visited = mutableSetOf<String>()
-
-    fun listPossibleBagColors(bagColor: String, tree: Map<String, List<String>>): List<String> =
-        setOfNotNull(tree[bagColor]).plus(
-            tree.getOrDefault(bagColor, emptyList()).mapNotNull {
-                if (visited.contains(it)) return@mapNotNull null
-                listPossibleBagColors(it, tree)
-            }
-        ).flatten()
-
-    return listPossibleBagColors(bagColor, buildInverted(input)).toSet().size
+    val rules = buildRules(input)
+    return rules.keys.count {
+        canHoldColor(rules, it, bagColor)
+    }
 }
 
 check(4 == countPossibleBagColors(sampleInput, "shiny gold"))
