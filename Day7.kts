@@ -3,6 +3,7 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 
+// --- Part One ---
 val sampleInput = listOf(
     "light red bags contain 1 bright white bag, 2 muted yellow bags.",
     "dark orange bags contain 3 bright white bags, 4 muted yellow bags.",
@@ -30,14 +31,19 @@ fun buildRules(sentences: List<String>): Map<String, Map<String, Int>> =
             }
     }.toMap()
 
-fun canHoldColor(rules: Map<String, Map<String, Int>>, currentNode: String, bagColor: String, level: Int = 0): Boolean =
-    bagColor == currentNode && level > 0 ||
-            (rules[currentNode]?.entries?.any { canHoldColor(rules, it.key, bagColor, level + 1) } ?: false)
+fun canHoldColor(
+    rules: Map<String, Map<String, Int>>,
+    currentColor: String,
+    desiredColor: String,
+    level: Int = 0
+): Boolean =
+    desiredColor == currentColor && level > 0 ||
+            rules[currentColor]!!.entries.any { canHoldColor(rules, it.key, desiredColor, level + 1) }
 
-fun countPossibleBagColors(input: List<String>, bagColor: String): Int {
+fun countPossibleBagColors(input: List<String>, color: String): Int {
     val rules = buildRules(input)
     return rules.keys.count {
-        canHoldColor(rules, it, bagColor)
+        canHoldColor(rules, it, color)
     }
 }
 
@@ -47,3 +53,19 @@ val path = "${Paths.get("").toAbsolutePath()}/input/7.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence().toList()
 
 println(countPossibleBagColors(input, "shiny gold")) // 101
+
+// --- Part Two ---
+fun countBags(input: List<String>, desiredColor: String): Int {
+    val rules: Map<String, Map<String, Int>> = buildRules(input)
+    return countBagsRecur(rules, desiredColor) - 1
+}
+
+fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): Int =
+    1 + rules[currentBag]!!.entries.sumBy {
+        it.value * countBagsRecur(rules, it.key)
+    }
+
+check(32 == countBags(sampleInput, "shiny gold"))
+
+println(countBags(input, "shiny gold"))
+
