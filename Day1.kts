@@ -14,7 +14,7 @@ fun solvePair(input: List<Int>) = input
     .let { it.first * it.second }
 
 fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
-    flatMap { j -> List(size) { i -> Pair(j, this[i]) } }
+    flatMap { j -> List(size) { i -> Pair(j, get(i)) } }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/1.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map { it.toInt() }.toList()

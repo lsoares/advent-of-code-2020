@@ -32,9 +32,9 @@ fun buildRules(sentences: List<String>): Map<String, Map<String, Int>> =
     }.toMap()
 
 fun canHoldColor(rules: Map<String, Map<String, Int>>, currentColor: String, desiredColor: String): Boolean =
-    rules[currentColor]?.entries?.any {
+    (rules[currentColor] ?: error("not found")).entries.any {
         it.key == desiredColor || canHoldColor(rules, it.key, desiredColor)
-    } ?: false
+    }
 
 fun countPossibleBagColors(input: List<String>, color: String): Int =
     buildRules(input).let { rules ->
@@ -55,9 +55,9 @@ fun countBags(input: List<String>, desiredColor: String) =
     countBagsRecur(buildRules(input), desiredColor) - 1
 
 fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): Int =
-    (rules[currentBag]?.entries?.sumBy {
+    (rules[currentBag] ?: error("not found")).entries.sumBy {
         it.value * countBagsRecur(rules, it.key)
-    } ?: 0) + 1
+    } + 1
 
 check(32 == countBags(sampleInput, "shiny gold"))
 
