@@ -18,26 +18,56 @@ val sampleInput = listOf(
 
 fun toInstruction(str: String) = str.split(" ").let { Instruction(it.first(), it.last().toInt()) }
 
-check(5 == process(sampleInput))
+check(5 == findLoop(sampleInput).accumulator)
 
 data class Instruction(val operation: String, val value: Int)
-data class State(val current: Int = 0, val visited: List<Int> = emptyList(), val accumulator: Int = 0)
+data class State(
+    val current: Int = 0,
+    val visited: Set<Int> = emptySet(),
+    val accumulator: Int = 0,
+    val loopFound: Boolean = false
+)
 
-fun process(instructions: List<Instruction>, state: State = State()): Int =
+fun findLoop(instructions: List<Instruction>, state: State = State()): State =
     instructions[state.current].let { instruction ->
-        if (state.visited.contains(state.current)) return@let state.accumulator
-
-        val newState = when (instruction.operation) {
-            "nop" -> state.copy(current = state.current + 1)
-            "acc" -> state.copy(current = state.current + 1, accumulator = state.accumulator + instruction.value)
-            "jmp" -> state.copy(current = state.current + instruction.value)
-            else -> error("unknown instruction")
-        }.copy(visited = state.visited + state.current)
-        process(instructions, newState)
+        if (state.visited.contains(state.current)) return state.copy(loopFound = true)
+        val newState = process(instruction, state)
+        if (newState.current == instructions.size) return newState
+        findLoop(instructions, newState)
     }
+
+fun process(instruction: Instruction, state: State) = with(state) {
+    when (instruction.operation) {
+        "nop" -> copy(current = current + 1)
+        "acc" -> copy(current = current + 1, accumulator = accumulator + instruction.value)
+        "jmp" -> copy(current = current + instruction.value)
+        else -> error("unknown instruction")
+    }.copy(visited = visited + current)
+}
 
 val path = "${Paths.get("").toAbsolutePath()}/input/8.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n")
     .asSequence().map(::toInstruction).toList()
 
-println(process(input))
+println(findLoop(input).accumulator) // 1867
+
+// --- Part Two ---
+check(8 == firstWithoutLoop(sampleInput).accumulator)
+
+fun firstWithoutLoop(instructions: List<Instruction>) = instructions
+    .asSequence()
+    .mapIndexedNotNull { index, instruction ->
+        val swappedInstruction = when (instruction.operation) {
+            "jmp" -> instruction.copy("nop")
+            "nop" -> instruction.copy("jmp")
+            else -> return@mapIndexedNotNull null
+        }
+        instructions.replacing(swappedInstruction, index)
+    }
+    .map { findLoop(it) }
+    .first { !it.loopFound }
+
+fun <T> List<T>.replacing(newEl: T, index: Int) =
+    subList(0, index) + newEl + subList(index + 1, size)
+
+println(firstWithoutLoop(input).accumulator) // 1303
