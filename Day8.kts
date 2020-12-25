@@ -57,14 +57,15 @@ check(8 == firstWithoutLoop(sampleInput).accumulator)
 fun firstWithoutLoop(instructions: List<Instruction>) = instructions
     .asSequence()
     .mapIndexedNotNull { index, instruction ->
-        val swappedInstruction = when (instruction.operation) {
-            "jmp" -> instruction.copy("nop")
-            "nop" -> instruction.copy("jmp")
-            else -> return@mapIndexedNotNull null
+        instructions.run {
+            when (instruction.operation) {
+                "jmp" -> replacing(instruction.copy("nop"), index)
+                "nop" -> replacing(instruction.copy("jmp"), index)
+                else -> null
+            }
         }
-        instructions.replacing(swappedInstruction, index)
     }
-    .map { findLoop(it) }
+    .map(::findLoop)
     .first { !it.loopFound }
 
 fun <T> List<T>.replacing(newEl: T, index: Int) =
