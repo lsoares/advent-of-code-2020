@@ -32,19 +32,16 @@ fun buildRules(sentences: List<String>): Map<String, Map<String, Int>> =
     }.toMap()
 
 fun canHoldColor(
-    rules: Map<String, Map<String, Int>>,
-    currentColor: String,
-    desiredColor: String,
-    level: Int = 0
+    rules: Map<String, Map<String, Int>>, currentColor: String, desiredColor: String
 ): Boolean =
-    desiredColor == currentColor && level > 0 ||
-            rules[currentColor]!!.entries.any { canHoldColor(rules, it.key, desiredColor, level + 1) }
+    desiredColor == currentColor ||
+            rules[currentColor]!!.entries.any { canHoldColor(rules, it.key, desiredColor) }
 
 fun countPossibleBagColors(input: List<String>, color: String): Int {
     val rules = buildRules(input)
     return rules.keys.count {
         canHoldColor(rules, it, color)
-    }
+    } - 1
 }
 
 check(4 == countPossibleBagColors(sampleInput, "shiny gold"))
@@ -55,10 +52,8 @@ val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence()
 println(countPossibleBagColors(input, "shiny gold")) // 101
 
 // --- Part Two ---
-fun countBags(input: List<String>, desiredColor: String): Int {
-    val rules: Map<String, Map<String, Int>> = buildRules(input)
-    return countBagsRecur(rules, desiredColor) - 1
-}
+fun countBags(input: List<String>, desiredColor: String) =
+    countBagsRecur(buildRules(input), desiredColor) - 1
 
 fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): Int =
     1 + rules[currentBag]!!.entries.sumBy {
