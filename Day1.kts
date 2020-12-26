@@ -17,7 +17,7 @@ fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
     flatMap { j -> List(size) { i -> Pair(j, get(i)) } }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/1.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().map { it.toInt() }.toList()
+val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
 
 println(solvePair(input)) // 440979
 

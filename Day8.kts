@@ -23,8 +23,8 @@ check(5 == findLoop(sampleInput).accumulator)
 data class Instruction(val operation: String, val value: Int)
 data class State(
     val current: Int = 0,
-    val visited: Set<Int> = emptySet(),
     val accumulator: Int = 0,
+    val visited: Set<Int> = emptySet(),
     val loopFound: Boolean = false
 )
 

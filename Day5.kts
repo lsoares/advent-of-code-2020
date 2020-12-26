@@ -10,7 +10,7 @@ check(820 == findHighestSeatId(sequenceOf("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRR
 fun findHighestSeatId(input: Sequence<String>) = input.map(::toBoardingPassId).maxOrNull()
 
 fun toBoardingPassId(boardingSpec: String) =
-    convertPart(boardingSpec.dropLast(3)) * 8 + convertPart(boardingSpec.drop(7))
+    convertPart(boardingSpec.take(7)) * 8 + convertPart(boardingSpec.takeLast(3))
 
 fun convertPart(boardingPass: String) = boardingPass
     .replace(Regex("[FL]"), "0")

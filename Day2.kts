@@ -24,8 +24,8 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .map {
         val row = it.split(" ")
         Policy(
-            int1 = row[0].split("-").first().toInt(),
-            int2 = row[0].split("-").last().toInt(),
+            int1 = row[0].takeWhile { it != '-' }.toInt(),
+            int2 = row[0].takeLastWhile { it != '-' }.toInt(),
             char = row[1].first()
         ) to row.last()
     }
