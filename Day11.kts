@@ -18,32 +18,35 @@ val sampleInput = listOf(
 ).let { Seats(it) }
 
 data class Seats(val rows: List<String>) {
+    data class Position(val x: Int, val y: Int) {
+        fun move(move: Pair<Int, Int>) = Position(x + move.first, y + move.second)
+    }
+
+    fun iterate() = Seats(rows.mapIndexed { y, row ->
+        row.mapIndexed { x, _ -> iterate(Position(x, y)) }.joinToString("")
+    })
+
+    private fun iterate(position: Position) = when {
+        at(position) == EMPTY && around(position).none { it == OCCUPIED } -> OCCUPIED
+        at(position) == OCCUPIED && around(position).count { it == OCCUPIED } >= 4 -> EMPTY
+        else -> at(position)
+    }
+
+    private fun around(pos: Position) =
+        setOf(-1 to -1, 0 to -1, 1 to -1, -1 to 0, 1 to 0, -1 to 1, 0 to 1, 1 to 1)
+            .map { at(pos.move(it)) }
+
+    fun count(status: Char) = rows.joinToString("").count { it == status }
+
+    private fun at(position: Position) =
+        rows.getOrNull(position.y)?.getOrNull(position.x)
+
+    override fun toString() = rows.joinToString("\n")
+
     companion object {
         val OCCUPIED = '#'
         val EMPTY = 'L'
     }
-
-    private fun at(x: Int, y: Int) = rows.getOrNull(y)?.getOrNull(x) ?: 'x'
-
-    private fun around(x: Int, y: Int) = listOfNotNull(
-        at(x - 1, y - 1), at(x, y - 1), at(x + 1, y - 1),
-        at(x - 1, y), at(x + 1, y),
-        at(x - 1, y + 1), at(x, y + 1), at(x + 1, y + 1),
-    )
-
-    private fun iterate(x: Int, y: Int) = when {
-        at(x, y) == EMPTY && around(x, y).none { it == OCCUPIED } -> OCCUPIED
-        at(x, y) == OCCUPIED && around(x, y).count { it == OCCUPIED } >= 4 -> EMPTY
-        else -> at(x, y)
-    }
-
-    fun iterate() = Seats(rows.mapIndexed { y, row ->
-        row.mapIndexed { x, _ -> iterate(x, y) }.joinToString("")
-    })
-
-    fun count(status: Char) = rows.sumBy { it.count { it == status } }
-
-    override fun toString() = rows.joinToString("\n")
 }
 
 tailrec fun iterateUntilStable(seats: Seats): Seats {
