@@ -10,11 +10,9 @@ val sampleInput2 = listOf(
     38, 39, 11, 1, 32, 25, 35, 8, 17, 7, 9, 4, 2, 34, 10, 3
 )
 
-fun List<Int>.prepareData() = sorted()
-    .let { listOf(0) + it + (it.last() + 3) }
-
 fun getCount1And3(input: List<Int>) = input
-    .prepareData()
+    .sorted()
+    .let { listOf(0) + it + (it.last() + 3) }
     .windowed(2)
     .map { it.last() - it.first() }
     .groupingBy { it }
@@ -30,36 +28,18 @@ val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt)
 println(getCount1And3(input)) // 2760
 
 // --- Part Two ---
-fun countPossibilities(input: List<Int>) = input.prepareData().let {
-    it.foldIndexed(mapOf<Int, Long>()) { i, acc, _ ->
-        var d1 = it.diff(i, i - 1).toLong()
-        var d2 = it.diff(i, i - 2).toLong()
-        var d3 = it.diff(i, i - 3).toLong()
-        if (i == 0) {
-            d1 = 1L
-            d2 = 4L
-            d3 = 4L
-        }
-        if (i == 1) {
-            d2 = 4L
-            d3 = 4L
-        }
-        if (i == 2) {
-            d3 = 4L
-        }
-
-        var sum = (if (d1 <= 3L) acc.getOrDefault(i - 1, 0) else 0L) +
-                (if (d2 <= 3L) acc.getOrDefault(i - 2, 0) else 0L) +
-                (if (d3 <= 3L) acc.getOrDefault(i - 3, 0) else 0L)
-        if (i == 0) sum = 1
-        acc.plus(i to sum)
-    }.values.last()
-}
-
-fun List<Int>.diff(i1: Int, i0: Int) =
-    getOrElse(i1) { return 0 } - getOrElse(i0) { return 0 }
-
 check(8L == countPossibilities(sampleInput1))
 check(19208L == countPossibilities(sampleInput2))
+
+fun countPossibilities(input: List<Int>) = input
+    .sorted()
+    .fold(mapOf(0 to 1L)) { counts, jolts ->
+        val prev1 = counts.getOrDefault(jolts - 1, 0)
+        val prev2 = counts.getOrDefault(jolts - 2, 0)
+        val prev3 = counts.getOrDefault(jolts - 3, 0)
+        counts + (jolts to (prev1 + prev2 + prev3))
+    }
+    .values
+    .last()
 
 println(countPossibilities(input)) // 13816758796288
