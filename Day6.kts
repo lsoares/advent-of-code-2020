@@ -33,7 +33,7 @@ fun countAnswers2(answers: Sequence<List<String>>) =
     }
 
 fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
-    groupAnswers.fold(mapOf<Char, Int>()) { acc, ans ->
+    groupAnswers.fold(emptyMap()) { acc, ans ->
         acc + ans.map {
             it to (acc.getOrDefault(it, 0) + 1)
         }
