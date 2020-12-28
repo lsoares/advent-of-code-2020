@@ -40,6 +40,6 @@ fun countPossibilities(input: List<Int>) = input
         counts + (jolts to (prev1 + prev2 + prev3))
     }
     .values
-    .last()
+    .maxOrNull()
 
 println(countPossibilities(input)) // 13816758796288
