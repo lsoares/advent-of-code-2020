@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import java.util.*
 
 // --- Part One ---
-val sampleInput = listOf(
+val sampleInput1 = listOf(
     "L.LL.LL.LL",
     "LLLLLLL.LL",
     "L.L.L..L..",
@@ -33,16 +33,28 @@ data class Seats(val rows: List<String>) {
         else -> at(position)
     }
 
+    fun iterate2() = Seats(rows.mapIndexed { y, row ->
+        row.mapIndexed { x, _ -> iterate2(Position(x, y)) }.joinToString("")
+    })
+
+    private fun iterate2(position: Position) = when {
+        at(position) == EMPTY && aroundUntilSeat(position).none { it == OCCUPIED } -> OCCUPIED
+        at(position) == OCCUPIED && aroundUntilSeat(position).count { it == OCCUPIED } >= 5 -> EMPTY
+        else -> at(position)
+    }
+
     fun around(pos: Position) =
         directions.mapNotNull { at(pos.move(it)) }
 
     fun aroundUntilSeat(pos: Position) =
         directions.mapNotNull { visibleSeatFrom(pos, it) }
 
-    private tailrec fun visibleSeatFrom(currentPos: Position, move: Pair<Int, Int>): Char? =
-        when (at(currentPos.move(move))) {
-            FLOOR -> visibleSeatFrom(currentPos.move(move), move)
-            else -> at(currentPos.move(move))
+    private fun visibleSeatFrom(currentPos: Position, move: Pair<Int, Int>): Char? =
+        currentPos.move(move).let { next ->
+            when (at(next)) {
+                FLOOR -> visibleSeatFrom(next, move)
+                else -> at(next)
+            }
         }
 
     fun count(status: Char) = rows.joinToString("").count { it == status }
@@ -67,12 +79,12 @@ tailrec fun Seats.iterateUntilStable(): Seats {
     return iteration.iterateUntilStable()
 }
 
-check(null == sampleInput.at(Position(-1, 10)))
-check('L' == sampleInput.at(Position(1, 1)))
-check('.' == sampleInput.at(Position(3, 2)))
-check(6 == sampleInput.around(Position(1, 1)).count { it == Seats.EMPTY })
-check(2 == sampleInput.around(Position(1, 1)).count { it == Seats.FLOOR })
-check(37 == sampleInput.iterateUntilStable().count(Seats.OCCUPIED))
+check(null == sampleInput1.at(Position(-1, 10)))
+check('L' == sampleInput1.at(Position(1, 1)))
+check('.' == sampleInput1.at(Position(3, 2)))
+check(6 == sampleInput1.around(Position(1, 1)).count { it == Seats.EMPTY })
+check(2 == sampleInput1.around(Position(1, 1)).count { it == Seats.FLOOR })
+check(37 == sampleInput1.iterateUntilStable().count(Seats.OCCUPIED))
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
@@ -117,3 +129,12 @@ val sampleInput4 = listOf(
 check('L' == sampleInput4.at(Position(3, 3)))
 check(0 == sampleInput4.aroundUntilSeat(Position(3, 3)).count { it == Seats.OCCUPIED })
 
+tailrec fun Seats.iterateUntilStable2(): Seats {
+    val iteration = iterate2()
+    if (this == iteration) return this
+
+    return iteration.iterateUntilStable2()
+}
+
+check(26 == sampleInput1.iterateUntilStable2().count(Seats.OCCUPIED))
+println(input.iterateUntilStable2().count(Seats.OCCUPIED)) // 1937
