@@ -17,10 +17,11 @@ val sampleInput = listOf(
     "L.LLLLL.LL",
 ).let { Seats(it) }
 
+data class Position(val x: Int, val y: Int) {
+    fun move(move: Pair<Int, Int>) = Position(x + move.first, y + move.second)
+}
+
 data class Seats(val rows: List<String>) {
-    data class Position(val x: Int, val y: Int) {
-        fun move(move: Pair<Int, Int>) = Position(x + move.first, y + move.second)
-    }
 
     fun iterate() = Seats(rows.mapIndexed { y, row ->
         row.mapIndexed { x, _ -> iterate(Position(x, y)) }.joinToString("")
@@ -33,8 +34,8 @@ data class Seats(val rows: List<String>) {
     }
 
     fun around(pos: Position) =
-        setOf(-1 to -1, 0 to -1, 1 to -1, -1 to 0, 1 to 0, -1 to 1, 0 to 1, 1 to 1)
-            .map { at(pos.move(it)) }
+        listOf(0 to -1, 1 to -1, 1 to 0, 1 to 1, 0 to 1, -1 to 1, -1 to 0, -1 to -1)
+            .mapNotNull { at(pos.move(it)) }
 
     fun count(status: Char) = rows.joinToString("").count { it == status }
 
@@ -55,10 +56,13 @@ tailrec fun Seats.iterateUntilStable(): Seats {
 
     return iteration.iterateUntilStable()
 }
-
+check('L' == sampleInput.at(Position(1, 1)))
+check('.' == sampleInput.at(Position(3, 2)))
+check(listOf('.', 'L', 'L', 'L', '.', 'L', 'L', 'L') == sampleInput.around(Position(1, 1)))
 check(37 == sampleInput.iterateUntilStable().count(Seats.OCCUPIED))
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
 
 println(input.iterateUntilStable().count(Seats.OCCUPIED)) // 2152
+
