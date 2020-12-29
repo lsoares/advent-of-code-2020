@@ -32,13 +32,13 @@ data class Seats(val rows: List<String>) {
         else -> at(position)
     }
 
-    private fun around(pos: Position) =
+    fun around(pos: Position) =
         setOf(-1 to -1, 0 to -1, 1 to -1, -1 to 0, 1 to 0, -1 to 1, 0 to 1, 1 to 1)
             .map { at(pos.move(it)) }
 
     fun count(status: Char) = rows.joinToString("").count { it == status }
 
-    private fun at(position: Position) =
+    fun at(position: Position) =
         rows.getOrNull(position.y)?.getOrNull(position.x)
 
     override fun toString() = rows.joinToString("\n")
@@ -49,16 +49,16 @@ data class Seats(val rows: List<String>) {
     }
 }
 
-tailrec fun iterateUntilStable(seats: Seats): Seats {
-    val iteration = seats.iterate()
-    if (seats == iteration) return seats
+tailrec fun Seats.iterateUntilStable(): Seats {
+    val iteration = iterate()
+    if (this == iteration) return this
 
-    return iterateUntilStable(iteration)
+    return iteration.iterateUntilStable()
 }
 
-check(37 == iterateUntilStable(sampleInput).count(Seats.OCCUPIED))
+check(37 == sampleInput.iterateUntilStable().count(Seats.OCCUPIED))
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
 
-println(iterateUntilStable(input).count(Seats.OCCUPIED)) // 2152
+println(input.iterateUntilStable().count(Seats.OCCUPIED)) // 2152
