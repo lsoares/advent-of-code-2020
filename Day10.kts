@@ -9,6 +9,8 @@ val sampleInput2 = listOf(
     28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19,
     38, 39, 11, 1, 32, 25, 35, 8, 17, 7, 9, 4, 2, 34, 10, 3
 )
+check(35 == getCount1And3(sampleInput1))
+check(220 == getCount1And3(sampleInput2))
 
 fun getCount1And3(input: List<Int>) = input
     .sorted()
@@ -19,13 +21,10 @@ fun getCount1And3(input: List<Int>) = input
     .eachCount()
     .let { it[1]!! * it[3]!! }
 
-check(35 == getCount1And3(sampleInput1))
-check(220 == getCount1And3(sampleInput2))
-
 val path = "${Paths.get("").toAbsolutePath()}/input/10.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
 
-println(getCount1And3(input)) // 2760
+check(2760 == getCount1And3(input))
 
 // --- Part Two ---
 check(8L == countPossibilities(sampleInput1))
@@ -42,4 +41,4 @@ fun countPossibilities(input: List<Int>) = input
     .values
     .maxOrNull()
 
-println(countPossibilities(input)) // 13816758796288
+check(13816758796288L == countPossibilities(input))

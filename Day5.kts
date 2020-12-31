@@ -20,7 +20,7 @@ fun convertPart(boardingPass: String) = boardingPass
 fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/5.txt")))
     .asSequence()
 
-println(findHighestSeatId(loadFile())) // 806
+check(806 == findHighestSeatId(loadFile()))
 
 // --- Part Two ---
 fun findMissingBoardingId(input: Sequence<String>) = input
@@ -32,4 +32,4 @@ fun findMissingBoardingId(input: Sequence<String>) = input
     .first { it.second != 1 }
     .first + 1
 
-println(findMissingBoardingId(loadFile())) // 562
+check(562 == findMissingBoardingId(loadFile()))

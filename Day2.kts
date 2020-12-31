@@ -30,7 +30,7 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
         ) to row.last()
     }
 
-println(checkValidity(loadFile(), ::validate1)) // 483
+check(483 == checkValidity(loadFile(), ::validate1))
 
 // --- Part Two ---
 check(1 == checkValidity(sampleInput.asSequence(), ::validate2))
@@ -38,4 +38,5 @@ check(1 == checkValidity(sampleInput.asSequence(), ::validate2))
 fun validate2(row: Pair<Policy, String>) =
     (row.second[row.first.int1 - 1] == row.first.char) xor (row.second[row.first.int2 - 1] == row.first.char)
 
-println(checkValidity(loadFile(), ::validate2)) // 482
+check(482 == checkValidity(loadFile(), ::validate2))
+

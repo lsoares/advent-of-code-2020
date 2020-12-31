@@ -26,7 +26,7 @@ fun isValidPassport1(passport: Map<String, String>) =
 val path = "${Paths.get("").toAbsolutePath()}/input/4.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n\n").asSequence().map(::toPassport)
 
-println(countValidPassports1(input)) // 208
+check(208 == countValidPassports1(input))
 
 // --- Part Two ---
 val sampleInput2 = sequenceOf(
@@ -57,6 +57,7 @@ fun isValidPassport2(passport: Map<String, String>) = with(passport) {
             get("pid")?.let { it.length == 9 && it.all(Char::isDigit) } == true
 }
 
-val input2 = Scanner(FileInputStream(File(path))).useDelimiter("\n\n").asSequence().map(::toPassport)
+val input2 = Scanner(FileInputStream(File(path))).useDelimiter("\n\n")
+    .asSequence().map(::toPassport)
 
-println(countValidPassports2(input2)) // 167
+check(167 == countValidPassports2(input2))

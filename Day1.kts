@@ -19,7 +19,7 @@ fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
 val path = "${Paths.get("").toAbsolutePath()}/input/1.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
 
-println(solvePair(input)) // 440979
+check(440979 == solvePair(input))
 
 // --- Part Two ---
 check(241861950 == solveTriple(testInput))
@@ -30,4 +30,4 @@ fun solveTriple(input: List<Int>) = input
     .first { it.first + it.second + it.third == 2020 }
     .let { it.first * it.second * it.third }
 
-println(solveTriple(input)) // 82498112
+check(82498112 == solveTriple(input))

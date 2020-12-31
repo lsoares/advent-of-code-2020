@@ -22,7 +22,7 @@ fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}
     .asSequence()
     .map { it.split("\n") }
 
-println(countAnswers(loadFile())) // 6633
+check(6633 == countAnswers(loadFile()))
 
 // --- Part Two ---
 check(6 == countAnswers2(sampleInput))
@@ -39,4 +39,4 @@ fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
         }
     }
 
-println(countAnswers2(loadFile())) // 3202
+check(3202 == countAnswers2(loadFile()))

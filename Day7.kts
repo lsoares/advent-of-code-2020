@@ -16,6 +16,8 @@ val sampleInput = listOf(
     "dotted black bags contain no other bags.",
 )
 
+check(4 == countPossibleBagColors(sampleInput, "shiny gold"))
+
 fun buildRules(sentences: List<String>): Map<String, Map<String, Int>> =
     sentences.map { sentence ->
         sentence.removeSuffix(".")
@@ -43,14 +45,14 @@ fun countPossibleBagColors(input: List<String>, color: String): Int =
         }
     }
 
-check(4 == countPossibleBagColors(sampleInput, "shiny gold"))
-
 val path = "${Paths.get("").toAbsolutePath()}/input/7.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence().toList()
 
-println(countPossibleBagColors(input, "shiny gold")) // 101
+check(101 == countPossibleBagColors(input, "shiny gold"))
 
 // --- Part Two ---
+check(32 == countBags(sampleInput, "shiny gold"))
+
 fun countBags(input: List<String>, desiredColor: String) =
     countBagsRecur(buildRules(input), desiredColor) - 1
 
@@ -59,7 +61,5 @@ fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): In
         it.value * countBagsRecur(rules, it.key)
     } + 1
 
-check(32 == countBags(sampleInput, "shiny gold"))
-
-println(countBags(input, "shiny gold")) // 108636
+check(108636 == countBags(input, "shiny gold"))
 

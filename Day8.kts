@@ -49,7 +49,7 @@ val path = "${Paths.get("").toAbsolutePath()}/input/8.txt"
 val input = Scanner(FileInputStream(File(path))).useDelimiter("\n")
     .asSequence().map(::toInstruction).toList()
 
-println(findLoop(input).accumulator) // 1867
+check(1867 == findLoop(input).accumulator)
 
 // --- Part Two ---
 check(8 == firstWithoutLoop(sampleInput).accumulator)
@@ -71,4 +71,4 @@ fun firstWithoutLoop(instructions: List<Instruction>) = instructions
 fun <T> List<T>.replacing(newEl: T, index: Int) =
     subList(0, index) + newEl + subList(index + 1, size)
 
-println(firstWithoutLoop(input).accumulator) // 1303
+check(1303 == firstWithoutLoop(input).accumulator)

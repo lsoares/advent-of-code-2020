@@ -9,6 +9,8 @@ import kotlin.math.abs
 // --- Part One ---
 val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toCommand)
 
+check(25 == process(sampleInput).manhattanDistance)
+
 fun toCommand(cmd: String) = Command(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
     value = cmd.drop(1).toInt()
@@ -45,9 +47,9 @@ fun process(commands: Sequence<Command>) =
         state.run(command)
     }
 
-check(25 == process(sampleInput).manhattanDistance)
-
 val path = "${Paths.get("").toAbsolutePath()}/input/12.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map(::toCommand)
 
-println(process(input).manhattanDistance) // 420
+check(420 == process(input).manhattanDistance)
+
+// --- Part Two ---

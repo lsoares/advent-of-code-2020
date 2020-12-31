@@ -21,6 +21,8 @@ data class Position(val x: Int, val y: Int) {
     fun move(move: Pair<Int, Int>) = Position(x + move.first, y + move.second)
 }
 
+check(37 == sampleInput1.sequence1().last().count(Seats.OCCUPIED))
+
 data class Seats(val rows: List<String>) {
 
     fun sequence1() = generateSequence(this) { before ->
@@ -65,7 +67,6 @@ data class Seats(val rows: List<String>) {
             }
         }
 
-
     fun at(position: Position) =
         rows.getOrNull(position.y)?.getOrNull(position.x)
 
@@ -81,55 +82,11 @@ data class Seats(val rows: List<String>) {
     }
 }
 
-check(null == sampleInput1.at(Position(-1, 10)))
-check('L' == sampleInput1.at(Position(1, 1)))
-check('.' == sampleInput1.at(Position(3, 2)))
-check(6 == sampleInput1.around(Position(1, 1)).count { it == Seats.EMPTY })
-check(2 == sampleInput1.around(Position(1, 1)).count { it == Seats.FLOOR })
-check(37 == sampleInput1.sequence1().last().count(Seats.OCCUPIED))
-
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
 
-println(input.sequence1().last().count(Seats.OCCUPIED)) // 2152
+check(2152 == input.sequence1().last().count(Seats.OCCUPIED))
 
 // --- Part Two ---
-val sampleInput2 = listOf(
-    ".......#.",
-    "...#.....",
-    ".#.......",
-    ".........",
-    "..#L....#",
-    "....#....",
-    ".........",
-    "#........",
-    "...#.....",
-).let { Seats(it) }
-
-check('L' == sampleInput2.at(Position(3, 4)))
-check(8 == sampleInput2.aroundUntilSeat(Position(3, 4)).count { it == Seats.OCCUPIED })
-
-val sampleInput3 = listOf(
-    ".............",
-    ".L.L.#.#.#.#.",
-    ".............",
-).let { Seats(it) }
-
-check('L' == sampleInput3.at(Position(1, 1)))
-check(0 == sampleInput3.aroundUntilSeat(Position(1, 1)).count { it == Seats.OCCUPIED })
-
-val sampleInput4 = listOf(
-    ".##.##.",
-    "#.#.#.#",
-    "##...##",
-    "...L...",
-    "##...##",
-    "#.#.#.#",
-    ".##.##.",
-).let { Seats(it) }
-
-check('L' == sampleInput4.at(Position(3, 3)))
-check(0 == sampleInput4.aroundUntilSeat(Position(3, 3)).count { it == Seats.OCCUPIED })
-
 check(26 == sampleInput1.sequence2().last().count(Seats.OCCUPIED))
-println(input.sequence2().last().count(Seats.OCCUPIED)) // 1937
+check(1937 == input.sequence2().last().count(Seats.OCCUPIED))
