@@ -9,7 +9,7 @@ import kotlin.math.abs
 // --- Part One ---
 val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toCommand)
 
-check(25 == process(sampleInput).manhattanDistance)
+check(25 == Ship().execute1(sampleInput).manhattanDistance)
 
 fun toCommand(cmd: String) = Command(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
@@ -20,10 +20,15 @@ data class Command(val action: Action, val value: Int) {
     enum class Action { NORTH, SOUTH, EAST, WEST, LEFT, RIGHT, FORWARD }
 }
 
-data class State(val x: Int, val y: Int, val direction: Direction) {
+data class Ship(val x: Int = 0, val y: Int = 0, val direction: Direction = Direction.EAST) {
     val manhattanDistance = abs(x) + abs(y)
 
-    fun run(command: Command): State =
+    fun execute1(commands: Sequence<Command>) =
+        commands.fold(this) { state, command ->
+            state.execute1(command)
+        }
+
+    fun execute1(command: Command): Ship =
         when (command.action) {
             NORTH -> copy(y = y + command.value)
             EAST -> copy(x = x + command.value)
@@ -31,7 +36,7 @@ data class State(val x: Int, val y: Int, val direction: Direction) {
             WEST -> copy(x = x - command.value)
             RIGHT -> copy(direction = newDirection(command.value))
             LEFT -> copy(direction = newDirection(360 - command.value))
-            FORWARD -> run(command.copy(valueOf(direction.name)))
+            FORWARD -> execute1(command.copy(action = valueOf(direction.name)))
         }
 
     private fun newDirection(delta: Int) =
@@ -42,14 +47,9 @@ data class State(val x: Int, val y: Int, val direction: Direction) {
     }
 }
 
-fun process(commands: Sequence<Command>) =
-    commands.fold(State(0, 0, State.Direction.EAST)) { state, command ->
-        state.run(command)
-    }
-
 val path = "${Paths.get("").toAbsolutePath()}/input/12.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().map(::toCommand)
 
-check(420 == process(input).manhattanDistance)
+check(420 == Ship().execute1(input).manhattanDistance)
 
 // --- Part Two ---
