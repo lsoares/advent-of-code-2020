@@ -23,19 +23,29 @@ data class Position(val x: Int, val y: Int) {
 
 data class Seats(val rows: List<String>) {
 
-    fun iterate() = Seats(rows.mapIndexed { y, row ->
-        row.mapIndexed { x, _ -> iterate(Position(x, y)) }.joinToString("")
-    })
+    fun sequence1() = generateSequence(this) { before ->
+        before.rows
+            .mapIndexed { y, row ->
+                row.mapIndexed { x, _ -> before.iterate1(Position(x, y)) }.joinToString("")
+            }
+            .let { Seats(it) }
+            .takeIf { it != before }
+    }
 
-    private fun iterate(position: Position) = when {
+    private fun iterate1(position: Position) = when {
         at(position) == EMPTY && around(position).none { it == OCCUPIED } -> OCCUPIED
         at(position) == OCCUPIED && around(position).count { it == OCCUPIED } >= 4 -> EMPTY
         else -> at(position)
     }
 
-    fun iterate2() = Seats(rows.mapIndexed { y, row ->
-        row.mapIndexed { x, _ -> iterate2(Position(x, y)) }.joinToString("")
-    })
+    fun sequence2() = generateSequence(this) { before ->
+        before.rows
+            .mapIndexed { y, row ->
+                row.mapIndexed { x, _ -> before.iterate2(Position(x, y)) }.joinToString("")
+            }
+            .let { Seats(it) }
+            .takeIf { it != before }
+    }
 
     private fun iterate2(position: Position) = when {
         at(position) == EMPTY && aroundUntilSeat(position).none { it == OCCUPIED } -> OCCUPIED
@@ -43,11 +53,9 @@ data class Seats(val rows: List<String>) {
         else -> at(position)
     }
 
-    fun around(pos: Position) =
-        directions.mapNotNull { at(pos.move(it)) }
+    fun around(pos: Position) = directions.mapNotNull { at(pos.move(it)) }
 
-    fun aroundUntilSeat(pos: Position) =
-        directions.mapNotNull { visibleSeatFrom(pos, it) }
+    fun aroundUntilSeat(pos: Position) = directions.mapNotNull { visibleSeatFrom(pos, it) }
 
     private fun visibleSeatFrom(currentPos: Position, move: Pair<Int, Int>): Char? =
         currentPos.move(move).let { next ->
@@ -57,10 +65,11 @@ data class Seats(val rows: List<String>) {
             }
         }
 
-    fun count(status: Char) = rows.joinToString("").count { it == status }
 
     fun at(position: Position) =
         rows.getOrNull(position.y)?.getOrNull(position.x)
+
+    fun count(status: Char) = rows.joinToString("").count { it == status }
 
     override fun toString() = rows.joinToString("\n")
 
@@ -72,24 +81,17 @@ data class Seats(val rows: List<String>) {
     }
 }
 
-tailrec fun Seats.iterateUntilStable(): Seats {
-    val iteration = iterate()
-    if (this == iteration) return this
-
-    return iteration.iterateUntilStable()
-}
-
 check(null == sampleInput1.at(Position(-1, 10)))
 check('L' == sampleInput1.at(Position(1, 1)))
 check('.' == sampleInput1.at(Position(3, 2)))
 check(6 == sampleInput1.around(Position(1, 1)).count { it == Seats.EMPTY })
 check(2 == sampleInput1.around(Position(1, 1)).count { it == Seats.FLOOR })
-check(37 == sampleInput1.iterateUntilStable().count(Seats.OCCUPIED))
+check(37 == sampleInput1.sequence1().last().count(Seats.OCCUPIED))
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
 val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
 
-println(input.iterateUntilStable().count(Seats.OCCUPIED)) // 2152
+println(input.sequence1().last().count(Seats.OCCUPIED)) // 2152
 
 // --- Part Two ---
 val sampleInput2 = listOf(
@@ -129,12 +131,5 @@ val sampleInput4 = listOf(
 check('L' == sampleInput4.at(Position(3, 3)))
 check(0 == sampleInput4.aroundUntilSeat(Position(3, 3)).count { it == Seats.OCCUPIED })
 
-tailrec fun Seats.iterateUntilStable2(): Seats {
-    val iteration = iterate2()
-    if (this == iteration) return this
-
-    return iteration.iterateUntilStable2()
-}
-
-check(26 == sampleInput1.iterateUntilStable2().count(Seats.OCCUPIED))
-println(input.iterateUntilStable2().count(Seats.OCCUPIED)) // 1937
+check(26 == sampleInput1.sequence2().last().count(Seats.OCCUPIED))
+println(input.sequence2().last().count(Seats.OCCUPIED)) // 1937

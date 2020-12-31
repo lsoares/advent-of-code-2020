@@ -1,6 +1,5 @@
 import Day12.Command.Action
 import Day12.Command.Action.*
-import Day12.State.Direction
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Paths
@@ -8,7 +7,7 @@ import java.util.*
 import kotlin.math.abs
 
 // --- Part One ---
-val sampleInput = listOf("F10", "N3", "F7", "R90", "F11").map(::toCommand).asSequence()
+val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toCommand)
 
 fun toCommand(cmd: String) = Command(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
@@ -36,7 +35,9 @@ data class State(val x: Int, val y: Int, val direction: Direction) {
     private fun newDirection(delta: Int) =
         Direction.values().first { it.degrees == (direction.degrees + delta) % 360 }
 
-    enum class Direction(val degrees: Int) { NORTH(0), EAST(90), SOUTH(180), WEST(270) }
+    enum class Direction(val degrees: Int) {
+        NORTH(0), EAST(90), SOUTH(180), WEST(270)
+    }
 }
 
 fun process(commands: Sequence<Command>) =
