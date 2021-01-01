@@ -5,11 +5,13 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 // --- Part One ---
 val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toCommand)
 
-check(25 == Ship().execute1(sampleInput).position.manhattanDistance())
+check(25 == Ship().execute(sampleInput).position.manhattanDistance())
 
 fun toCommand(cmd: String) = Instruction(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
@@ -29,35 +31,42 @@ data class Position(val x: Int, val y: Int) {
             Direction.WEST -> copy(x = x - amount)
         }
 
-    fun manhattanDistance(from: Position = Position(0, 0)) =
-        abs(x - from.x) + abs(y - from.y)
+    fun rotate(angle: Int) = Position(
+        x = x * cos(angle.asRad()).toInt() - y * sin(angle.asRad()).toInt(),
+        y = x * sin(angle.asRad()).toInt() + y * cos(angle.asRad()).toInt(),
+    )
+
+    private fun Int.asRad() = Math.toRadians(toDouble())
+
+    fun manhattanDistance() = abs(x) + abs(y)
 }
 
-enum class Direction(val degrees: Int) {
-    NORTH(0), EAST(90), SOUTH(180), WEST(270);
-
-    fun update(delta: Int) =
-        Direction.values().first { it.degrees == (degrees + delta) % 360 }
-}
+enum class Direction { NORTH, EAST, SOUTH, WEST }
 
 data class Ship(
     val position: Position = Position(0, 0),
-    val direction: Direction = Direction.EAST,
+    val waypoint: Position = Position(1, 0),
 ) {
 
-    fun execute1(commands: Sequence<Instruction>) =
+    fun execute(commands: Sequence<Instruction>) =
         commands.fold(this) { state, command ->
-            state.execute1(command)
+            state.execute(command)
         }
 
-    private fun execute1(instruction: Instruction): Ship =
+    private fun execute(instruction: Instruction) =
         when (instruction.action) {
             NORTH, EAST, SOUTH, WEST -> copy(
                 position = position.move(Direction.valueOf(instruction.action.name), instruction.value)
             )
-            RIGHT -> copy(direction = direction.update(instruction.value))
-            LEFT -> copy(direction = direction.update(360 - instruction.value))
-            FORWARD -> execute1(instruction.copy(action = Action.valueOf(direction.name)))
+            RIGHT, LEFT -> copy(
+                waypoint = waypoint.rotate(instruction.value * (if (instruction.action == LEFT) 1 else -1))
+            )
+            FORWARD -> copy(
+                position = Position(
+                    x = position.x + waypoint.x * instruction.value,
+                    y = position.y + waypoint.y * instruction.value,
+                )
+            )
         }
 }
 
@@ -65,4 +74,7 @@ fun loadFile() =
     Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/12.txt")))
         .asSequence().map(::toCommand)
 
-check(420 == Ship().execute1(loadFile()).position.manhattanDistance())
+check(420 == Ship().execute(loadFile()).position.manhattanDistance())
+
+// --- Part Two ---
+//check(286 == Ship().execute(sampleInput).position.manhattanDistance())
