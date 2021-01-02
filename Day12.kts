@@ -1,5 +1,7 @@
 import Day12.Instruction.Action
 import Day12.Instruction.Action.*
+import Day12.Ship.MoveMode.SHIP
+import Day12.Ship.MoveMode.WAYPOINT
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Paths
@@ -46,7 +48,10 @@ enum class Direction { NORTH, EAST, SOUTH, WEST }
 data class Ship(
     val position: Position = Position(0, 0),
     val waypoint: Position = Position(1, 0),
+    val moveMode: MoveMode = SHIP,
 ) {
+
+    enum class MoveMode { SHIP, WAYPOINT }
 
     fun execute(commands: Sequence<Instruction>) =
         commands.fold(this) { state, command ->
@@ -55,9 +60,16 @@ data class Ship(
 
     private fun execute(instruction: Instruction) =
         when (instruction.action) {
-            NORTH, EAST, SOUTH, WEST -> copy(
-                position = position.move(Direction.valueOf(instruction.action.name), instruction.value)
-            )
+            NORTH, EAST, SOUTH, WEST ->
+                when (moveMode) {
+                    SHIP -> copy(
+                        position = position.move(Direction.valueOf(instruction.action.name), instruction.value)
+                    )
+                    WAYPOINT -> copy(
+                        waypoint = waypoint.move(Direction.valueOf(instruction.action.name), instruction.value)
+                    )
+                }
+
             RIGHT, LEFT -> copy(
                 waypoint = waypoint.rotate(instruction.value * (if (instruction.action == LEFT) 1 else -1))
             )
@@ -77,4 +89,8 @@ fun loadFile() =
 check(420 == Ship().execute(loadFile()).position.manhattanDistance())
 
 // --- Part Two ---
-//check(286 == Ship().execute(sampleInput).position.manhattanDistance())
+check(286 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
+    .execute(sampleInput).position.manhattanDistance())
+
+check(42073 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
+    .execute(loadFile()).position.manhattanDistance())
