@@ -4,6 +4,7 @@ import Day12.Ship.MoveMode.SHIP
 import Day12.Ship.MoveMode.WAYPOINT
 import java.io.File
 import java.io.FileInputStream
+import java.lang.Math.toRadians
 import java.nio.file.Paths
 import java.util.*
 import kotlin.math.abs
@@ -11,11 +12,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 // --- Part One ---
-val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toCommand)
+val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toInstruction)
 
-check(25 == Ship().execute(sampleInput).position.manhattanDistance())
+check(25 == Ship().execute(sampleInput).position.manhattanDistance)
 
-fun toCommand(cmd: String) = Instruction(
+fun toInstruction(cmd: String) = Instruction(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
     value = cmd.drop(1).toInt()
 )
@@ -25,19 +26,17 @@ data class Instruction(val action: Action, val value: Int) {
 }
 
 data class Position(val x: Int, val y: Int) {
-    fun move(xInc: Int = 0, yInc: Int = 0) = Position(x + xInc, y + yInc)
+    fun move(xInc: Int, yInc: Int) = Position(x + xInc, y + yInc)
 
     fun rotate(angle: Int) = Position(
         x = x * cos(-angle.asRad()).toInt() - y * sin(-angle.asRad()).toInt(),
         y = x * sin(-angle.asRad()).toInt() + y * cos(-angle.asRad()).toInt(),
     )
 
-    private fun Int.asRad() = Math.toRadians(toDouble())
+    private fun Int.asRad() = toRadians(toDouble())
 
-    fun manhattanDistance() = abs(x) + abs(y)
+    val manhattanDistance get() = abs(x) + abs(y)
 }
-
-enum class Direction { NORTH, EAST, SOUTH, WEST }
 
 data class Ship(
     val position: Position = Position(0, 0),
@@ -74,17 +73,13 @@ data class Ship(
 
 fun loadFile() =
     Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/12.txt")))
-        .asSequence().map(::toCommand)
+        .asSequence().map(::toInstruction)
 
-check(420 == Ship().execute(loadFile()).position.manhattanDistance())
+check(420 == Ship().execute(loadFile()).position.manhattanDistance)
 
 // --- Part Two ---
-check(
-    286 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
-        .execute(sampleInput).position.manhattanDistance()
-)
+fun ship2() = Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
 
-check(
-    42073 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
-        .execute(loadFile()).position.manhattanDistance()
-)
+check(286 == ship2().execute(sampleInput).position.manhattanDistance)
+check(42073 == ship2().execute(loadFile()).position.manhattanDistance)
+
