@@ -46,8 +46,8 @@ data class Ship(
 
     enum class MoveMode { SHIP, WAYPOINT }
 
-    fun execute(commands: Sequence<Instruction>) =
-        commands.fold(this) { state, command ->
+    fun execute(instructions: Sequence<Instruction>) =
+        instructions.fold(this) { state, command ->
             state.execute(command)
         }
 
