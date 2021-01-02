@@ -25,17 +25,11 @@ data class Instruction(val action: Action, val value: Int) {
 }
 
 data class Position(val x: Int, val y: Int) {
-    fun move(direction: Direction, amount: Int) =
-        when (direction) {
-            Direction.NORTH -> copy(y = y + amount)
-            Direction.EAST -> copy(x = x + amount)
-            Direction.SOUTH -> copy(y = y - amount)
-            Direction.WEST -> copy(x = x - amount)
-        }
+    fun move(xInc: Int = 0, yInc: Int = 0) = Position(x + xInc, y + yInc)
 
     fun rotate(angle: Int) = Position(
-        x = x * cos(angle.asRad()).toInt() - y * sin(angle.asRad()).toInt(),
-        y = x * sin(angle.asRad()).toInt() + y * cos(angle.asRad()).toInt(),
+        x = x * cos(-angle.asRad()).toInt() - y * sin(-angle.asRad()).toInt(),
+        y = x * sin(-angle.asRad()).toInt() + y * cos(-angle.asRad()).toInt(),
     )
 
     private fun Int.asRad() = Math.toRadians(toDouble())
@@ -60,25 +54,21 @@ data class Ship(
 
     private fun execute(instruction: Instruction) =
         when (instruction.action) {
-            NORTH, EAST, SOUTH, WEST ->
-                when (moveMode) {
-                    SHIP -> copy(
-                        position = position.move(Direction.valueOf(instruction.action.name), instruction.value)
-                    )
-                    WAYPOINT -> copy(
-                        waypoint = waypoint.move(Direction.valueOf(instruction.action.name), instruction.value)
-                    )
-                }
-
-            RIGHT, LEFT -> copy(
-                waypoint = waypoint.rotate(instruction.value * (if (instruction.action == LEFT) 1 else -1))
-            )
+            NORTH -> move(yInc = instruction.value)
+            SOUTH -> move(yInc = -instruction.value)
+            EAST -> move(xInc = instruction.value)
+            WEST -> move(xInc = -instruction.value)
+            RIGHT -> copy(waypoint = waypoint.rotate(instruction.value))
+            LEFT -> copy(waypoint = waypoint.rotate(-instruction.value))
             FORWARD -> copy(
-                position = Position(
-                    x = position.x + waypoint.x * instruction.value,
-                    y = position.y + waypoint.y * instruction.value,
-                )
+                position = position.move(xInc = waypoint.x * instruction.value, yInc = waypoint.y * instruction.value)
             )
+        }
+
+    private fun move(xInc: Int = 0, yInc: Int = 0) =
+        when (moveMode) {
+            SHIP -> copy(position = position.move(xInc, yInc))
+            WAYPOINT -> copy(waypoint = waypoint.move(xInc, yInc))
         }
 }
 
@@ -89,8 +79,12 @@ fun loadFile() =
 check(420 == Ship().execute(loadFile()).position.manhattanDistance())
 
 // --- Part Two ---
-check(286 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
-    .execute(sampleInput).position.manhattanDistance())
+check(
+    286 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
+        .execute(sampleInput).position.manhattanDistance()
+)
 
-check(42073 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
-    .execute(loadFile()).position.manhattanDistance())
+check(
+    42073 == Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
+        .execute(loadFile()).position.manhattanDistance()
+)
