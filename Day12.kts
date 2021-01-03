@@ -13,8 +13,9 @@ import kotlin.math.sin
 
 // --- Part One ---
 val sampleInput = sequenceOf("F10", "N3", "F7", "R90", "F11").map(::toInstruction)
+fun ship1() = Ship(position = Position(0, 0), moveMode = SHIP, waypoint = Position(1, 0))
 
-check(25 == Ship().execute(sampleInput).position.manhattanDistance)
+check(25 == ship1().execute(sampleInput).position.manhattanDistance)
 
 fun toInstruction(cmd: String) = Instruction(
     action = cmd.first().let { letter -> Action.values().first() { it.name.startsWith(letter) } },
@@ -38,11 +39,7 @@ data class Position(val x: Int, val y: Int) {
     val manhattanDistance get() = abs(x) + abs(y)
 }
 
-data class Ship(
-    val position: Position = Position(0, 0),
-    val waypoint: Position = Position(1, 0),
-    val moveMode: MoveMode = SHIP,
-) {
+data class Ship(val position: Position, val waypoint: Position, val moveMode: MoveMode) {
 
     enum class MoveMode { SHIP, WAYPOINT }
 
@@ -75,10 +72,10 @@ fun loadFile() =
     Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/12.txt")))
         .asSequence().map(::toInstruction)
 
-check(420 == Ship().execute(loadFile()).position.manhattanDistance)
+check(420 == ship1().execute(loadFile()).position.manhattanDistance)
 
 // --- Part Two ---
-fun ship2() = Ship(moveMode = WAYPOINT, waypoint = Position(10, 1))
+fun ship2() = Ship(position = Position(0, 0), moveMode = WAYPOINT, waypoint = Position(10, 1))
 
 check(286 == ship2().execute(sampleInput).position.manhattanDistance)
 check(42073 == ship2().execute(loadFile()).position.manhattanDistance)
