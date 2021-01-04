@@ -20,7 +20,7 @@ fun validate1(row: Pair<Policy, String>) =
 data class Policy(val int1: Int, val int2: Int, val char: Char)
 
 fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/2.txt")))
-    .useDelimiter("\n").asSequence()
+    .useDelimiter(System.lineSeparator()).asSequence()
     .map {
         val row = it.split(" ")
         Policy(

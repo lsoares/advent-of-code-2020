@@ -19,10 +19,8 @@ fun findWrongIndex(preambleSize: Int, input: List<Long>, index: Int = preambleSi
 fun <T> List<T>.nChoose2() =
     flatMap { i -> mapNotNull { j -> i.takeIf { it != j }?.let { i to j } } }
 
-
 val path = "${Paths.get("").toAbsolutePath()}/input/9.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence()
-    .map(String::toLong).toList()
+val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toLong).toList()
 
 check(15690279L == input[findWrongIndex(25, input)])
 

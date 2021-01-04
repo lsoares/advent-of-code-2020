@@ -46,7 +46,7 @@ fun process(instruction: Instruction, state: State) = with(state) {
 }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/8.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter("\n")
+val input = Scanner(FileInputStream(File(path))).useDelimiter(System.lineSeparator())
     .asSequence().map(::toInstruction).toList()
 
 check(1867 == findLoop(input).accumulator)

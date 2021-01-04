@@ -18,9 +18,9 @@ fun countAnswers(answers: Sequence<List<String>>) =
     answers.sumBy { it.joinToString("").toList().toSet().size }
 
 fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/6.txt")))
-    .useDelimiter("\n\n")
+    .useDelimiter(System.lineSeparator().repeat(2))
     .asSequence()
-    .map { it.split("\n") }
+    .map { it.split(System.lineSeparator()) }
 
 check(6633 == countAnswers(loadFile()))
 

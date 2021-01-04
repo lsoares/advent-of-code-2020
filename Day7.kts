@@ -46,7 +46,8 @@ fun countPossibleBagColors(input: List<String>, color: String): Int =
     }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/7.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter("\n").asSequence().toList()
+val input = Scanner(FileInputStream(File(path)))
+    .useDelimiter(System.lineSeparator()).asSequence().toList()
 
 check(101 == countPossibleBagColors(input, "shiny gold"))
 
