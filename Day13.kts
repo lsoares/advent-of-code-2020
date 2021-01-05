@@ -30,6 +30,7 @@ check(754018.toBigInteger() == solve2(listOf(67, 7, 59, 61)))
 check(779210.toBigInteger() == solve2(listOf(67, 0, 7, 59, 61)))
 check(1261476.toBigInteger() == solve2(listOf(67, 7, 0, 59, 61)))
 check(1202161486.toBigInteger() == solve2(listOf(1789, 37, 47, 1889)))
+check(1068781.toBigInteger() == solve2(listOf(7, 13, 0, 0, 59, 0, 31, 19)))
 
 fun solve2(buses: List<Int>): BigInteger {
     val zero = 0.toBigInteger()
@@ -39,11 +40,12 @@ fun solve2(buses: List<Int>): BigInteger {
         .filter { it.value != zero }
     var step = busesI.first().value
     var time = zero
+
     busesI.drop(1).forEach { (i, bus) ->
-        while ((time.plus(i.toBigInteger())).mod(bus) != zero) {
-            time = time.plus(step)
+        while ((time + (i.toBigInteger())) % bus != zero) {
+            time = time + step
         }
-        step = step.times(bus)
+        step = step * bus
     }
     return time
 }
