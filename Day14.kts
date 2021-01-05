@@ -73,11 +73,11 @@ val sampleInput2 = sequenceOf(
 ).map(::parse)
 check(208L == process2(sampleInput2).sumAll())
 
-data class Memory2(private val mem: Map<Long, Long> = emptyMap(), val bitMask: BitMask2 = BitMask2()) {
+data class Memory2(private val mem: MutableMap<Long, Long> = mutableMapOf(), var bitMask: BitMask2 = BitMask2()) {
     fun set(address: Long, value: Long) =
-        copy(mem = bitMask.applyTo(address).fold(mem) { memEach, addressEach ->
-            memEach + (addressEach to value)
-        })
+        bitMask.applyTo(address).forEach { l: Long ->
+            mem[l] = value
+        }
 
     fun sumAll() = mem.values.sum()
 }
@@ -85,7 +85,7 @@ data class Memory2(private val mem: Map<Long, Long> = emptyMap(), val bitMask: B
 data class BitMask2(val value: String = "0".repeat(36)) {
     private val xCount = value.count { it == 'X' }
 
-    private fun sequenceForMask(address: Long) =
+    fun applyTo(address: Long): Sequence<Long> =
         (0 until pow(2.0, xCount.toDouble()).toInt())
             .asSequence()
             .map { it.toString(2).padStart(xCount, '0') }
@@ -106,24 +106,17 @@ data class BitMask2(val value: String = "0".repeat(36)) {
                     set(indexedValue.index, indexedValue.value)
             }.joinToString("")
         }
-
-    fun applyTo(address: Long): Sequence<Long> =
-        (0 until pow(2.0, xCount.toDouble()).toInt())
-            .asSequence()
-            .map { it.toString(2).padStart(xCount, '0') }
-            .map {
-                it.fold(prepareNewMask(address)) { acc, ch ->
-                    acc.replaceFirst('X', ch)
-                }.toLong(2)
-            }
 }
 
-fun process2(instructions: Sequence<Instruction>) = instructions
-    .fold(Memory2()) { memory, (type, arg0, arg1) ->
+fun process2(instructions: Sequence<Instruction>): Memory2 {
+    val memory = Memory2()
+    instructions.forEach { (type, arg0, arg1) ->
         when (type) {
-            SET_MASK -> memory.copy(bitMask = BitMask2(arg0))
+            SET_MASK -> memory.bitMask = BitMask2(arg0)
             SET_VALUE -> memory.set(arg0.toLong(), arg1?.toLong() ?: error("missing arg"))
         }
     }
+    return memory
+}
 
 check(3608464522781L == process2(loadFile()).sumAll())
