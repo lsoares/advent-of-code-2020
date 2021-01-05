@@ -36,11 +36,11 @@ data class Program(val instructions: Sequence<Instruction>) {
     }
 }
 
-data class BitMask(val mask: String = "X".repeat(36)) {
-    private val andMask = mask.replace("X", "1").toLong(2)
-    private val orMask = mask.replace("X", "0").toLong(2)
+data class BitMask(val value: String = "X".repeat(36)) {
+    private val andMask = value.replace("X", "1").toLong(2)
+    private val orMask = value.replace("X", "0").toLong(2)
 
-    fun applyTo(value: Long) = value and andMask or orMask
+    fun applyTo(number: Long) = number and andMask or orMask
 }
 
 data class Memory(private val mem: Map<Int, Long> = emptyMap(), val bitMask: BitMask = BitMask()) {
@@ -58,13 +58,20 @@ fun process(instructions: Sequence<Instruction>) = instructions
         }
     }
 
-val path = "${Paths.get("").toAbsolutePath()}/input/14.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter(System.lineSeparator()).asSequence()
+fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/14.txt")))
+    .useDelimiter(System.lineSeparator()).asSequence()
     .map(::parse)
 
-check(12610010960049L == process(input).sumAll())
+check(12610010960049L == process(loadFile()).sumAll())
 
 // --- Part Two ---
+val sampleInput2 = sequenceOf(
+    "mask = 000000000000000000000000000000X1001X",
+    "mem[42] = 100",
+    "mask = 00000000000000000000000000000000X0XX",
+    "mem[26] = 1",
+).map(::parse)
+check(208L == process2(sampleInput2).sumAll())
 
 data class Memory2(private val mem: Map<Long, Long> = emptyMap(), val bitMask: BitMask2 = BitMask2()) {
     fun set(address: Long, value: Long) =
@@ -75,30 +82,40 @@ data class Memory2(private val mem: Map<Long, Long> = emptyMap(), val bitMask: B
     fun sumAll() = mem.values.sum()
 }
 
-data class BitMask2(val mask: String = "0".repeat(36)) {
-    private val orMask = mask.replace("X", "0").toLong(2)
+data class BitMask2(val value: String = "0".repeat(36)) {
+    private val xCount = value.count { it == 'X' }
 
-    private val combinations by {
-        val maxComb = pow(2.0, mask.count { it == 'X' }.toDouble()).toInt()
-        (0 until maxComb).map {
-            it.toString(2).padStart(mask.count { it == 'X' }, '0')
-        }.map(::applyCombination)
-    }
-
-    private fun applyCombination(string: String): String {
-        val m = mask.toMutableList()
-        var curr = 0
-        m.forEachIndexed { index: Int, c: Char ->
-            if (c == 'X') {
-                m[index] = string[curr]
-                curr++
+    private fun sequenceForMask(address: Long) =
+        (0 until pow(2.0, xCount.toDouble()).toInt())
+            .asSequence()
+            .map { it.toString(2).padStart(xCount, '0') }
+            .map {
+                it.fold(prepareNewMask(address)) { acc, ch ->
+                    acc.replaceFirst('X', ch)
+                }.toLong(2)
             }
-        }
-        return m.joinToString("")
-    }
 
-    fun applyTo(address: Long): List<Long> = combinations.
-//    listOf(address or orMask)
+    private fun prepareNewMask(address: Long) = address
+        .toString(2)
+        .padStart(36, '0')
+        .withIndex()
+        .filter { it.value == '1' }
+        .fold(value) { acc, indexedValue ->
+            acc.toMutableList().apply {
+                if (acc[indexedValue.index] != 'X')
+                    set(indexedValue.index, indexedValue.value)
+            }.joinToString("")
+        }
+
+    fun applyTo(address: Long): Sequence<Long> =
+        (0 until pow(2.0, xCount.toDouble()).toInt())
+            .asSequence()
+            .map { it.toString(2).padStart(xCount, '0') }
+            .map {
+                it.fold(prepareNewMask(address)) { acc, ch ->
+                    acc.replaceFirst('X', ch)
+                }.toLong(2)
+            }
 }
 
 fun process2(instructions: Sequence<Instruction>) = instructions
@@ -109,11 +126,4 @@ fun process2(instructions: Sequence<Instruction>) = instructions
         }
     }
 
-val sampleInput2 = sequenceOf(
-//    "mask = 000000000000000000000000000000X1001X",
-    //"mem[42] = 100",
-    "mask = 00000000000000000000000000000000X0XX",
-    //"mem[26] = 1",
-).map(::parse)
-
-println(process2(sampleInput2))
+check(3608464522781L == process2(loadFile()).sumAll())
