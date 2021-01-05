@@ -100,11 +100,9 @@ data class BitMask2(val value: String = "0".repeat(36)) {
         .padStart(36, '0')
         .withIndex()
         .filter { it.value == '1' }
-        .fold(value) { acc, indexedValue ->
-            acc.toMutableList().apply {
-                if (acc[indexedValue.index] != 'X')
-                    set(indexedValue.index, indexedValue.value)
-            }.joinToString("")
+        .fold(value) { acc, (index, value) ->
+            if (acc[index] != 'X') acc.replaceRange(index, index + 1, value.toString())
+            else acc
         }
 }
 
