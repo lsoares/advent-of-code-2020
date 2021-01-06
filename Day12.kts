@@ -79,4 +79,3 @@ fun ship2() = Ship(position = Position(0, 0), moveMode = WAYPOINT, waypoint = Po
 
 check(286 == ship2().execute(sampleInput).position.manhattanDistance)
 check(42073 == ship2().execute(loadFile()).position.manhattanDistance)
-
