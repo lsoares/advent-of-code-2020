@@ -1,28 +1,40 @@
 // --- Part One ---
-check(0 == Game(listOf(0, 3, 6)).drop(9).first())
+check(0 == Game(listOf(0, 3, 6)).at(10))
 
-data class Game(private val startingNumbers: List<Int>) : Sequence<Int> {
-    private val usedNumbers = mutableListOf<Int>()
+data class Game(private val startingNumbers: List<Int>) {
+    private val usedNumbers = mutableMapOf<Int, Int>()
+    private var size = 0
+    private var lastUsed = - 1
 
-    override fun iterator() =
-        object : Iterator<Int> {
-            override fun hasNext() = true
-            override fun next() = calc().also(usedNumbers::add)
+    init {
+        startingNumbers.forEach(::store)
+    }
+
+    fun at(nth: Int): Int {
+        repeat(nth) {
+            store(calc())
         }
+        return lastUsed
+    }
 
     private fun calc(): Int {
-        if (usedNumbers.size < startingNumbers.size) {
-            return startingNumbers[usedNumbers.size]
-        }
-        val lastNumberUsed = usedNumbers
-            .withIndex()
-            .filter { it.value == usedNumbers.last() }
+        val referencesToLast = usedNumbers.getOrElse(lastUsed, { return 0 })
 
-        if (lastNumberUsed.size == 1) {
-            return 0
-        }
-        return lastNumberUsed.last().index - lastNumberUsed.dropLast(1).last().index
+        return size - referencesToLast
+    }
+
+    private fun store(number: Int) {
+        usedNumbers[number] = size
+        lastUsed = number
+        size ++
     }
 }
 
-check(1194 == Game(listOf(6, 13, 1, 15, 2, 0)).drop(2019).first())
+//If that was the first time the number has been spoken, the current player says 0.
+//Otherwise, the number had been spoken before; the current player announces how many turns apart the number is from when
+// it was previously spoken.
+
+check(1194 == Game(listOf(6, 13, 1, 15, 2, 0)).at(2020))
+
+// --- Part Two ---
+check(175594 == Game(listOf(0, 3, 6)).at(30_000_000))
