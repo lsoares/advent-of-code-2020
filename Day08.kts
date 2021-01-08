@@ -28,13 +28,15 @@ data class State(
     val loopFound: Boolean = false
 )
 
-fun findLoop(instructions: List<Instruction>, state: State = State()): State =
-    instructions[state.current].let { instruction ->
-        if (state.current in state.visited) return state.copy(loopFound = true)
-        val newState = process(instruction, state)
-        if (newState.current == instructions.size) return newState
-        findLoop(instructions, newState)
+tailrec fun findLoop(instructions: List<Instruction>, state: State = State()): State {
+    if (state.current in state.visited) return state.copy(loopFound = true)
+
+    val newState = process(instructions[state.current], state)
+    return when (newState.current) {
+        instructions.size -> newState
+        else -> findLoop(instructions, newState)
     }
+}
 
 fun process(instruction: Instruction, state: State) = with(state) {
     when (instruction.operation) {
