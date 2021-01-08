@@ -74,7 +74,7 @@ val sampleInput2 = sequenceOf(
 check(208L == process2(sampleInput2).sumAll())
 
 data class Memory2(private val mem: MutableMap<Long, Long> = mutableMapOf(), var bitMask: BitMask2 = BitMask2()) {
-    fun set(address: Long, value: Long) =
+    operator fun set(address: Long, value: Long) =
         bitMask.applyTo(address).forEach { l: Long ->
             mem[l] = value
         }
@@ -111,7 +111,7 @@ fun process2(instructions: Sequence<Instruction>): Memory2 {
     instructions.forEach { (type, arg0, arg1) ->
         when (type) {
             SET_MASK -> memory.bitMask = BitMask2(arg0)
-            SET_VALUE -> memory.set(arg0.toLong(), arg1?.toLong() ?: error("missing arg"))
+            SET_VALUE -> memory[arg0.toLong()] = arg1?.toLong() ?: error("missing arg")
         }
     }
     return memory

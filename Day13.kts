@@ -43,9 +43,9 @@ fun solve2(buses: List<Int>): BigInteger {
 
     busesI.drop(1).forEach { (i, bus) ->
         while ((time + (i.toBigInteger())) % bus != zero) {
-            time = time + step
+            time += step
         }
-        step = step * bus
+        step *= bus
     }
     return time
 }

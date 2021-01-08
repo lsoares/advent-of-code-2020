@@ -40,4 +40,3 @@ fun validate2(row: Pair<Policy, String>) =
     (row.second[row.first.int1 - 1] == row.first.char) xor (row.second[row.first.int2 - 1] == row.first.char)
 
 check(482 == checkValidity(getPuzzleInput(), ::validate2))
-

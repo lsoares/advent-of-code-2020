@@ -59,6 +59,8 @@ data class Seats(val rows: List<String>) {
 
     fun aroundUntilSeat(pos: Position) = directions.mapNotNull { visibleSeatFrom(pos, it) }
 
+    fun count(status: Char) = rows.joinToString("").count { it == status }
+
     private fun visibleSeatFrom(currentPos: Position, move: Pair<Int, Int>): Char? =
         currentPos.move(move).let { next ->
             when (at(next)) {
@@ -67,12 +69,10 @@ data class Seats(val rows: List<String>) {
             }
         }
 
-    fun at(position: Position) =
-        rows.getOrNull(position.y)?.getOrNull(position.x)
-
-    fun count(status: Char) = rows.joinToString("").count { it == status }
-
     override fun toString() = rows.joinToString("\n")
+
+    private fun at(position: Position) =
+        rows.getOrNull(position.y)?.getOrNull(position.x)
 
     companion object {
         private val directions = listOf(0 to -1, 1 to -1, 1 to 0, 1 to 1, 0 to 1, -1 to 1, -1 to 0, -1 to -1)
