@@ -68,14 +68,14 @@ data class Ship(val position: Position, val waypoint: Position, val moveMode: Mo
         }
 }
 
-fun loadFile() =
+fun getPuzzleInput() =
     Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/12.txt")))
         .asSequence().map(::toInstruction)
 
-check(420 == ship1().execute(loadFile()).position.manhattanDistance)
+check(420 == ship1().execute(getPuzzleInput()).position.manhattanDistance)
 
 // --- Part Two ---
 fun ship2() = Ship(position = Position(0, 0), moveMode = WAYPOINT, waypoint = Position(10, 1))
 
 check(286 == ship2().execute(sampleInput).position.manhattanDistance)
-check(42073 == ship2().execute(loadFile()).position.manhattanDistance)
+check(42073 == ship2().execute(getPuzzleInput()).position.manhattanDistance)

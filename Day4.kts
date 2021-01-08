@@ -4,8 +4,10 @@ import java.nio.file.Paths
 import java.util.*
 
 // --- Part One ---
+typealias Passport = Map<String, String>
+
 fun toPassport(input: String) = input
-    .split("\\s".toRegex())
+    .split("\\s+".toRegex())
     .map { it.split(":").let { it[0] to it[1] } }
     .toMap()
 
@@ -18,15 +20,18 @@ val sampleInput = sequenceOf(
 
 check(2 == countValidPassports1(sampleInput))
 
-fun countValidPassports1(input: Sequence<Map<String, String>>) = input.count(::isValidPassport1)
+fun countValidPassports1(input: Sequence<Passport>) = input.count(::isValidPassport1)
 
-fun isValidPassport1(passport: Map<String, String>) =
+fun isValidPassport1(passport: Passport) =
     setOf("ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt").all(passport::containsKey)
 
-val path = "${Paths.get("").toAbsolutePath()}/input/4.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter("\n\n").asSequence().map(::toPassport)
+fun getPuzzleInput(): Sequence<Passport> {
+    val path = "${Paths.get("").toAbsolutePath()}/input/4.txt"
+    return Scanner(FileInputStream(File(path))).useDelimiter(System.lineSeparator().repeat(2))
+        .asSequence().map(::toPassport)
+}
 
-check(208 == countValidPassports1(input))
+check(208 == countValidPassports1(getPuzzleInput()))
 
 // --- Part Two ---
 val sampleInput2 = sequenceOf(
@@ -40,11 +45,11 @@ val sampleInput2 = sequenceOf(
     "iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719",
 ).map(::toPassport)
 
-fun countValidPassports2(input: Sequence<Map<String, String>>) = input.count(::isValidPassport2)
+fun countValidPassports2(input: Sequence<Passport>) = input.count(::isValidPassport2)
 
 check(4 == countValidPassports2(sampleInput2))
 
-fun isValidPassport2(passport: Map<String, String>) = with(passport) {
+fun isValidPassport2(passport: Passport) = with(passport) {
     get("byr")?.let { it.length == 4 && it.toInt() in 1920..2002 } == true &&
             get("iyr")?.let { it.length == 4 && it.toInt() in 2010..2020 } == true &&
             get("eyr")?.let { it.length == 4 && it.toInt() in 2020..2030 } == true &&
@@ -57,7 +62,4 @@ fun isValidPassport2(passport: Map<String, String>) = with(passport) {
             get("pid")?.let { it.length == 9 && it.all(Char::isDigit) } == true
 }
 
-val input2 = Scanner(FileInputStream(File(path))).useDelimiter("\n\n")
-    .asSequence().map(::toPassport)
-
-check(167 == countValidPassports2(input2))
+check(167 == countValidPassports2(getPuzzleInput()))

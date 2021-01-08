@@ -83,10 +83,10 @@ data class Seats(val rows: List<String>) {
 }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
 
-check(2152 == input.sequence1().last().count(Seats.OCCUPIED))
+check(2152 == puzzleInput.sequence1().last().count(Seats.OCCUPIED))
 
 // --- Part Two ---
 check(26 == sampleInput1.sequence2().last().count(Seats.OCCUPIED))
-check(1937 == input.sequence2().last().count(Seats.OCCUPIED))
+check(1937 == puzzleInput.sequence2().last().count(Seats.OCCUPIED))

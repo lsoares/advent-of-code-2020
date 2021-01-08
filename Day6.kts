@@ -17,12 +17,12 @@ check(11 == countAnswers(sampleInput))
 fun countAnswers(answers: Sequence<List<String>>) =
     answers.sumBy { it.joinToString("").toList().toSet().size }
 
-fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/6.txt")))
+fun getPuzzleInput() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/6.txt")))
     .useDelimiter(System.lineSeparator().repeat(2))
     .asSequence()
     .map { it.split(System.lineSeparator()) }
 
-check(6633 == countAnswers(loadFile()))
+check(6633 == countAnswers(getPuzzleInput()))
 
 // --- Part Two ---
 check(6 == countAnswers2(sampleInput))
@@ -39,4 +39,4 @@ fun countAnswer(groupAnswers: List<String>): Map<Char, Int> =
         }
     }
 
-check(3202 == countAnswers2(loadFile()))
+check(3202 == countAnswers2(getPuzzleInput()))

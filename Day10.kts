@@ -22,9 +22,9 @@ fun getCount1And3(input: List<Int>) = input
     .let { it[1]!! * it[3]!! }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/10.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
 
-check(2760 == getCount1And3(input))
+check(2760 == getCount1And3(puzzleInput))
 
 // --- Part Two ---
 check(8L == countPossibilities(sampleInput1))
@@ -41,4 +41,4 @@ fun countPossibilities(input: List<Int>) = input
     .values
     .maxOrNull()
 
-check(13816758796288L == countPossibilities(input))
+check(13816758796288L == countPossibilities(puzzleInput))

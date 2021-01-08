@@ -46,10 +46,10 @@ fun countPossibleBagColors(input: List<String>, color: String): Int =
     }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/7.txt"
-val input = Scanner(FileInputStream(File(path)))
+val puzzleInput = Scanner(FileInputStream(File(path)))
     .useDelimiter(System.lineSeparator()).asSequence().toList()
 
-check(101 == countPossibleBagColors(input, "shiny gold"))
+check(101 == countPossibleBagColors(puzzleInput, "shiny gold"))
 
 // --- Part Two ---
 check(32 == countBags(sampleInput, "shiny gold"))
@@ -62,5 +62,5 @@ fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): In
         it.value * countBagsRecur(rules, it.key)
     } + 1
 
-check(108636 == countBags(input, "shiny gold"))
+check(108636 == countBags(puzzleInput, "shiny gold"))
 

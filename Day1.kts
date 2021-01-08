@@ -5,8 +5,8 @@ import java.util.Scanner
 import java.net.URL
 
 // --- Part One ---
-val testInput = listOf(1721, 979, 366, 299, 675, 1456)
-check(514579 == solvePair(testInput))
+val sampleInput = listOf(1721, 979, 366, 299, 675, 1456)
+check(514579 == solvePair(sampleInput))
 
 fun solvePair(input: List<Int>) = input
     .cartesianProduct()
@@ -17,12 +17,12 @@ fun <S> List<S>.cartesianProduct(): List<Pair<S, S>> =
     flatMap { j -> List(size) { i -> Pair(j, get(i)) } }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/1.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().map(String::toInt).toList()
 
-check(440979 == solvePair(input))
+check(440979 == solvePair(puzzleInput))
 
 // --- Part Two ---
-check(241861950 == solveTriple(testInput))
+check(241861950 == solveTriple(sampleInput))
 
 fun solveTriple(input: List<Int>) = input
     .cartesianProduct()
@@ -30,4 +30,4 @@ fun solveTriple(input: List<Int>) = input
     .first { it.first + it.second + it.third == 2020 }
     .let { it.first * it.second * it.third }
 
-check(82498112 == solveTriple(input))
+check(82498112 == solveTriple(puzzleInput))

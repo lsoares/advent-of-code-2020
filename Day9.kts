@@ -20,9 +20,9 @@ fun <T> List<T>.nChoose2() =
     flatMap { i -> mapNotNull { j -> i.takeIf { it != j }?.let { i to j } } }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/9.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().map(String::toLong).toList()
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().map(String::toLong).toList()
 
-check(15690279L == input[findWrongIndex(25, input)])
+check(15690279L == puzzleInput[findWrongIndex(25, puzzleInput)])
 
 // --- Part Two ---
 check(62L == findContiguousWrong(5, sampleInput))
@@ -46,4 +46,4 @@ fun findContiguousWrong(preambleSize: Int, input: List<Long>): Long {
     error("not found")
 }
 
-check(2174232L == findContiguousWrong(25, input))
+check(2174232L == findContiguousWrong(25, puzzleInput))

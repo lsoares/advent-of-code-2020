@@ -58,11 +58,11 @@ fun process(instructions: Sequence<Instruction>) = instructions
         }
     }
 
-fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/14.txt")))
+fun getPuzzleInput() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/14.txt")))
     .useDelimiter(System.lineSeparator()).asSequence()
     .map(::parse)
 
-check(12610010960049L == process(loadFile()).sumAll())
+check(12610010960049L == process(getPuzzleInput()).sumAll())
 
 // --- Part Two ---
 val sampleInput2 = sequenceOf(
@@ -117,4 +117,4 @@ fun process2(instructions: Sequence<Instruction>): Memory2 {
     return memory
 }
 
-check(3608464522781L == process2(loadFile()).sumAll())
+check(3608464522781L == process2(getPuzzleInput()).sumAll())

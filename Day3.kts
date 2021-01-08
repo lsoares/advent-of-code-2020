@@ -23,9 +23,9 @@ check(7 == countTrees(sampleInput))
 fun countTrees(input: List<String>) = countTrees(input, 3, 1)
 
 val path = "${Paths.get("").toAbsolutePath()}/input/3.txt"
-val input = Scanner(FileInputStream(File(path))).asSequence().toList()
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().toList()
 
-check(247 == countTrees(input))
+check(247 == countTrees(puzzleInput))
 
 // --- Part Two ---
 check(336L == countTreesMultiplePredicates(sampleInput))
@@ -40,4 +40,4 @@ fun countTreesMultiplePredicates(input: List<String>) =
         .map { countTrees(input, it.first, it.second).toLong() }
         .reduce(Long::times)
 
-check(2983070376 == countTreesMultiplePredicates(input))
+check(2983070376 == countTreesMultiplePredicates(puzzleInput))

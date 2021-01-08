@@ -19,10 +19,10 @@ fun convertPart(boardingPass: String) = boardingPass
     .replace(Regex("[BR]"), "1")
     .let { parseInt(it, 2) }
 
-fun loadFile() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/5.txt")))
+fun getPuzzleInput() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/5.txt")))
     .asSequence()
 
-check(806 == findHighestSeatId(loadFile()))
+check(806 == findHighestSeatId(getPuzzleInput()))
 
 // --- Part Two ---
 fun findMissingBoardingId(input: Sequence<String>) = input
@@ -34,4 +34,4 @@ fun findMissingBoardingId(input: Sequence<String>) = input
     .first { it.second != 1 }
     .first + 1
 
-check(562 == findMissingBoardingId(loadFile()))
+check(562 == findMissingBoardingId(getPuzzleInput()))

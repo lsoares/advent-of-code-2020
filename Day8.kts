@@ -46,10 +46,10 @@ fun process(instruction: Instruction, state: State) = with(state) {
 }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/8.txt"
-val input = Scanner(FileInputStream(File(path))).useDelimiter(System.lineSeparator())
+val puzzleInput = Scanner(FileInputStream(File(path))).useDelimiter(System.lineSeparator())
     .asSequence().map(::toInstruction).toList()
 
-check(1867 == findLoop(input).accumulator)
+check(1867 == findLoop(puzzleInput).accumulator)
 
 // --- Part Two ---
 check(8 == firstWithoutLoop(sampleInput).accumulator)
@@ -71,4 +71,4 @@ fun firstWithoutLoop(instructions: List<Instruction>) = instructions
 fun <T> List<T>.replacing(newEl: T, index: Int) =
     subList(0, index) + newEl + subList(index + 1, size)
 
-check(1303 == firstWithoutLoop(input).accumulator)
+check(1303 == firstWithoutLoop(puzzleInput).accumulator)

@@ -2,9 +2,8 @@ import java.io.File
 import java.math.BigInteger
 import java.nio.file.Paths
 
-val sampleInput = listOf("939", "7,13,x,x,59,x,31,19").let(::parse)
-
 // --- Part One ---
+val sampleInput = listOf("939", "7,13,x,x,59,x,31,19").let(::parse)
 check(295 == findEarliestBus(sampleInput.first, sampleInput.second))
 
 fun parse(input: List<String>) =
@@ -19,8 +18,9 @@ fun findEarliestBus(arrivedAt: Int, buses: Set<Int>) =
         busId * (nextBus - arrivedAt)
     } ?: error("bus not found")
 
-val input = File("${Paths.get("").toAbsolutePath()}/input/13.txt")
-    .readLines().let(::parse)
+val puzzleInput = File("${Paths.get("").toAbsolutePath()}/input/13.txt").readLines()
+
+val input = puzzleInput.let(::parse)
 
 check(5257 == findEarliestBus(input.first, input.second))
 
@@ -50,7 +50,6 @@ fun solve2(buses: List<Int>): BigInteger {
     return time
 }
 
-val input2 = File("${Paths.get("").toAbsolutePath()}/input/13.txt")
-    .readLines().last().split(",").map { if (it == "x") 0 else it.toInt() }
+val input2 = puzzleInput.last().split(",").map { if (it == "x") 0 else it.toInt() }
 
 check(538703333547789.toBigInteger() == solve2(input2))

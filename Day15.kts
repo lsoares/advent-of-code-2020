@@ -10,9 +10,9 @@ data class Game(private val startingNumbers: List<Int>) {
         startingNumbers.forEach(::store)
     }
 
-    fun at(nth: Int) =
-        usedNumbers.getOrElse(nth - 1, {
-            repeat(nth - startingNumbers.size) { calc() }
+    fun at(turn: Int) =
+        usedNumbers.getOrElse(turn - 1, {
+            repeat(turn - startingNumbers.size) { calc() }
             lastSpokenNumber
         })
 
