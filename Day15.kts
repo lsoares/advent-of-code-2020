@@ -2,24 +2,27 @@
 check(0 == Game(listOf(0, 3, 6)).at(10))
 
 data class Game(private val startingNumbers: List<Int>) {
-    private val usedNumbers = mutableMapOf<Int, Int>()
+    private var usedNumbers = mutableMapOf<Int, Int>()
     private var lastTurn = 0
     private var lastSpokenNumber = -1
 
-    init {
+    fun at(turn: Int): Int {
+        usedNumbers = HashMap<Int, Int>(turn)
+        lastTurn = 0
+        lastSpokenNumber = -1
         startingNumbers.forEach(::store)
-    }
-
-    fun at(turn: Int) =
-        usedNumbers.getOrElse(turn - 1, {
+        return usedNumbers.getOrElse(turn - 1, {
             repeat(turn - startingNumbers.size) { calc() }
             lastSpokenNumber
         })
+    }
 
     private fun calc(): Int {
         val lastNumberUsedAtTurn = usedNumbers.getOrElse(lastSpokenNumber, { return store(0) })
-        if (lastNumberUsedAtTurn == lastTurn) return store(0)
-        return store(lastTurn - lastNumberUsedAtTurn)
+        return when (lastNumberUsedAtTurn) {
+            lastTurn -> store(0)
+            else -> store(lastTurn - lastNumberUsedAtTurn)
+        }
     }
 
     private fun store(number: Int): Int {
