@@ -63,4 +63,3 @@ fun countBagsRecur(rules: Map<String, Map<String, Int>>, currentBag: String): In
     } + 1
 
 check(108636 == countBags(puzzleInput, "shiny gold"))
-
