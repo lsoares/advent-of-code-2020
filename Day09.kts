@@ -11,7 +11,7 @@ check(127L == sampleInput[findWrongIndex(5, sampleInput)])
 fun findWrongIndex(preambleSize: Int, input: List<Long>, index: Int = preambleSize): Int {
     val valid = input.take(preambleSize).nChoose2().map { it.first + it.second }.distinct()
     val current = input.drop(preambleSize).firstOrNull() ?: error("not found")
-    return if (valid.contains(current))
+    return if (current in valid)
         findWrongIndex(preambleSize, input.drop(1), index + 1)
     else index
 }

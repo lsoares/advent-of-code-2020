@@ -30,7 +30,7 @@ data class State(
 
 fun findLoop(instructions: List<Instruction>, state: State = State()): State =
     instructions[state.current].let { instruction ->
-        if (state.visited.contains(state.current)) return state.copy(loopFound = true)
+        if (state.current in state.visited) return state.copy(loopFound = true)
         val newState = process(instruction, state)
         if (newState.current == instructions.size) return newState
         findLoop(instructions, newState)
