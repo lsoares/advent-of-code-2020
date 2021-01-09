@@ -29,15 +29,13 @@ data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Se
         }
 
     data class Rule(val title: String, val range1: IntRange, val range2: IntRange) {
-        fun isValid(value: Int) = value in range1 || value in range2
+        operator fun contains(value: Int) = value in range1 || value in range2
     }
 
     data class Ticket(val values: List<Int>) {
         fun getInvalidValues(rules: Set<Rule>) =
             values.filter { value ->
-                rules.none { rule ->
-                    rule.isValid(value)
-                }
+                rules.none { value in it }
             }
     }
 }
