@@ -1,3 +1,5 @@
+import Day16.Notes.Rule
+import Day16.Notes.Ticket
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Paths
@@ -17,14 +19,28 @@ val sampleInput = listOf(
     "38,6,12"
 ).let(::parse)
 
-check(71 == findErrors(sampleInput).sum())
+check(71 == sampleInput.findErrors().sum())
 
-data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Set<Ticket>)
-data class Rule(val title: String, val range1: IntRange, val range2: IntRange) {
-    fun isValid(value: Int) = value in range1 || value in range2
+data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Set<Ticket>) {
+
+    fun findErrors(): List<Int> =
+        nearbyTickets.flatMap {
+            it.getInvalidValues(rules)
+        }
+
+    data class Rule(val title: String, val range1: IntRange, val range2: IntRange) {
+        fun isValid(value: Int) = value in range1 || value in range2
+    }
+
+    data class Ticket(val values: List<Int>) {
+        fun getInvalidValues(rules: Set<Rule>) =
+            values.filter { value ->
+                rules.none { rule ->
+                    rule.isValid(value)
+                }
+            }
+    }
 }
-
-typealias Ticket = List<Int>
 
 fun parse(input: List<String>) =
     Notes(
@@ -48,22 +64,14 @@ fun parse(input: List<String>) =
         ticket = input
             .dropWhile { !it.startsWith("your ticket:") }[1]
             .split(",")
-            .map(String::toInt),
+            .map(String::toInt)
+            .let(::Ticket),
         nearbyTickets = input
             .dropWhile { !it.startsWith("nearby tickets:") }
             .drop(1)
-            .map { it.split(",").map(String::toInt) }
+            .map { it.split(",").map(String::toInt).let(::Ticket) }
             .toSet(),
     )
-
-fun findErrors(notes: Notes) = notes
-    .nearbyTickets.flatMap { ticket ->
-        ticket.filter { ticketValue ->
-            notes.rules.none { rule ->
-                rule.isValid(ticketValue)
-            }
-        }
-    }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/16.txt"
 val puzzleInput = Scanner(FileInputStream(File(path)))
@@ -71,4 +79,4 @@ val puzzleInput = Scanner(FileInputStream(File(path)))
     .filter(String::isNotBlank)
     .toList().let(::parse)
 
-check(26941 == findErrors(puzzleInput).sum())
+check(26941 == puzzleInput.findErrors().sum())
