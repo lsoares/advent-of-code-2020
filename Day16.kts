@@ -55,10 +55,6 @@ check(71 == sampleInput1.errors.sum())
 
 data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Set<Ticket>) {
 
-    val rulesByName by lazy {
-        rules.map { it.title to it }.toMap()
-    }
-
     val validNearbyTickets by lazy {
         nearbyTickets.filter {
             it.getInvalidValues(rules).isEmpty()
@@ -66,8 +62,8 @@ data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Se
     }
 
     val ticketNumbersByIndex by lazy {
-        (0 until ticket.values.size).map { pos ->
-            validNearbyTickets.map { ticket -> ticket.values[pos] }
+        (0 until ticket.size).map { pos ->
+            validNearbyTickets.map { ticket -> ticket[pos] }
         }
     }
 
@@ -77,7 +73,7 @@ data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Se
         }
     }
 
-    val decodedTicket by lazy {
+    val rulesOrder by lazy {
         ticketNumbersByIndex
             .map { valuesAtIndex ->
                 rules.map { rule ->
@@ -94,22 +90,31 @@ data class Notes(val rules: Set<Rule>, val ticket: Ticket, val nearbyTickets: Se
                 }
                 acc + (indexedValue.index to value.key)
             }
-            .values
-            .mapIndexed { index, rule ->
-                rule to ticket.values[index]
-            }
+            .entries
+            .sortedBy { it.key }
+            .map { it.value }
+            .toList()
     }
 
-    data class Rule(val title: String, val range1: IntRange, val range2: IntRange) {
+    val decodedTicket by lazy {
+        rulesOrder.mapIndexed { index: Int, rule: Rule ->
+            rule to ticket[index]
+        }
+    }
+
+    data class Rule(val title: String, private val range1: IntRange, private val range2: IntRange) {
         operator fun contains(value: Int) = value in range1 || value in range2
         override fun toString() = title
     }
 
-    data class Ticket(val values: List<Int>) {
+    data class Ticket(private val values: List<Int>) {
         fun getInvalidValues(rules: Set<Rule>) =
             values.filter { value ->
                 rules.none { value in it }
             }
+
+        val size get() = values.size
+        operator fun get(index: Int) = values[index]
     }
 }
 
@@ -135,38 +140,13 @@ val sampleInput2 = listOf(
     "5,14,9",
 ).let(::parse)
 
-println(sampleInput1.decodedTicket)
-println(sampleInput2.decodedTicket)
-println(puzzleInput.decodedTicket)
+check(listOf("row", "class", "seat") == sampleInput1.rulesOrder.map { it.title })
+check(listOf("row", "class", "seat") == sampleInput2.rulesOrder.map { it.title })
 
 val puzzleAnswer = puzzleInput
     .decodedTicket
     .filter { it.first.title.startsWith("departure") }
-    .map { it.second.toBigInteger() }
+    .map { it.second.toLong() }
     .reduce { acc, i -> acc * i }
 
-println(puzzleAnswer)
-
-/*
-      IN-    c   r   s
-0ª  3/15/5   -   !   -    r       r
-1ª  9/1/14   !   x   -   cr       c
-2ª  18/5/9   x   x   !   crs      s
-
-1. por cada idx, por cada regra, validar valores de idx contra regra
-   0 r
-   1 cr
-   2 crs
-(0r) (1c 1r) (2c 2r 2s)
-2. ordenar por tamanho de regras
-3. escolher regra por idx:
-   a primeira deve estar sozinha fica logo escolhida
-   as já escolhidas nao contam
-   (fold)
-
-
- */
-
-//Based on the nearby tickets in the above example, the first position must be row,
-// the second position must be class,
-// and the third position must be seat; you can conclude that in your ticket, class is 12, row is 11, and seat is 13.
+check(634796407951L == puzzleAnswer)
