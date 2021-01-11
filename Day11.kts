@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import java.util.*
 
 // --- Part One ---
-val sampleInput1 = listOf(
+val sampleInput = listOf(
     "L.LL.LL.LL",
     "LLLLLLL.LL",
     "L.L.L..L..",
@@ -15,54 +15,54 @@ val sampleInput1 = listOf(
     "LLLLLLLLLL",
     "L.LLLLLL.L",
     "L.LLLLL.LL",
-).let { Seats(it) }
+).let(::Seats)
 
-data class Position(val x: Int, val y: Int) {
-    fun move(move: Pair<Int, Int>) = Position(x + move.first, y + move.second)
+data class Seat(val x: Int, val y: Int) {
+    fun move(move: Pair<Int, Int>) = copy(x + move.first, y + move.second)
 }
 
-check(37 == sampleInput1.sequence1().last().count(Seats.OCCUPIED))
+check(37 == sampleInput.sequence1().last().count(Seats.OCCUPIED))
 
 data class Seats(val rows: List<String>) {
 
     fun sequence1() = generateSequence(this) { before ->
         before.rows
             .mapIndexed { y, row ->
-                row.mapIndexed { x, _ -> before.iterate1(Position(x, y)) }.joinToString("")
+                row.mapIndexed { x, _ -> before.iterate1(Seat(x, y)) }.joinToString("")
             }
-            .let { Seats(it) }
+            .let(::Seats)
             .takeIf { it != before }
     }
 
-    private fun iterate1(position: Position) = when {
-        at(position) == EMPTY && around(position).none { it == OCCUPIED } -> OCCUPIED
-        at(position) == OCCUPIED && around(position).count { it == OCCUPIED } >= 4 -> EMPTY
-        else -> at(position)
+    private fun iterate1(seat: Seat) = when {
+        at(seat) == EMPTY && around(seat).none { it == OCCUPIED } -> OCCUPIED
+        at(seat) == OCCUPIED && around(seat).count { it == OCCUPIED } >= 4 -> EMPTY
+        else -> at(seat)
     }
+
+    private fun around(seat: Seat) = directions.mapNotNull { at(seat.move(it)) }
 
     fun sequence2() = generateSequence(this) { before ->
         before.rows
             .mapIndexed { y, row ->
-                row.mapIndexed { x, _ -> before.iterate2(Position(x, y)) }.joinToString("")
+                row.mapIndexed { x, _ -> before.iterate2(Seat(x, y)) }.joinToString("")
             }
-            .let { Seats(it) }
+            .let(::Seats)
             .takeIf { it != before }
     }
 
-    private fun iterate2(position: Position) = when {
-        at(position) == EMPTY && aroundUntilSeat(position).none { it == OCCUPIED } -> OCCUPIED
-        at(position) == OCCUPIED && aroundUntilSeat(position).count { it == OCCUPIED } >= 5 -> EMPTY
-        else -> at(position)
+    private fun iterate2(seat: Seat) = when {
+        at(seat) == EMPTY && aroundUntilSeat(seat).none { it == OCCUPIED } -> OCCUPIED
+        at(seat) == OCCUPIED && aroundUntilSeat(seat).count { it == OCCUPIED } >= 5 -> EMPTY
+        else -> at(seat)
     }
 
-    fun around(pos: Position) = directions.mapNotNull { at(pos.move(it)) }
-
-    fun aroundUntilSeat(pos: Position) = directions.mapNotNull { visibleSeatFrom(pos, it) }
+    private fun aroundUntilSeat(seat: Seat) = directions.mapNotNull { visibleSeatFrom(seat, it) }
 
     fun count(status: Char) = rows.joinToString("").count { it == status }
 
-    private fun visibleSeatFrom(currentPos: Position, move: Pair<Int, Int>): Char? =
-        currentPos.move(move).let { next ->
+    private fun visibleSeatFrom(currentSeat: Seat, move: Pair<Int, Int>): Char? =
+        currentSeat.move(move).let { next ->
             when (at(next)) {
                 FLOOR -> visibleSeatFrom(next, move)
                 else -> at(next)
@@ -71,8 +71,8 @@ data class Seats(val rows: List<String>) {
 
     override fun toString() = rows.joinToString("\n")
 
-    private fun at(position: Position) =
-        rows.getOrNull(position.y)?.getOrNull(position.x)
+    private fun at(seat: Seat) =
+        rows.getOrNull(seat.y)?.getOrNull(seat.x)
 
     companion object {
         private val directions = listOf(0 to -1, 1 to -1, 1 to 0, 1 to 1, 0 to 1, -1 to 1, -1 to 0, -1 to -1)
@@ -88,5 +88,5 @@ val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().toList().let
 check(2152 == puzzleInput.sequence1().last().count(Seats.OCCUPIED))
 
 // --- Part Two ---
-check(26 == sampleInput1.sequence2().last().count(Seats.OCCUPIED))
+check(26 == sampleInput.sequence2().last().count(Seats.OCCUPIED))
 check(1937 == puzzleInput.sequence2().last().count(Seats.OCCUPIED))
