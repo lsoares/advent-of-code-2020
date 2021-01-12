@@ -75,7 +75,10 @@ data class Seats(val rows: List<String>) {
         rows.getOrNull(seat.y)?.getOrNull(seat.x)
 
     companion object {
-        private val directions = listOf(0 to -1, 1 to -1, 1 to 0, 1 to 1, 0 to 1, -1 to 1, -1 to 0, -1 to -1)
+        private val directions = (-1..1).flatMap { y ->
+            (-1..1).map { x -> x to y }
+        }.filterNot { it == 0 to 0 }
+
         val OCCUPIED = '#'
         val EMPTY = 'L'
         val FLOOR = '.'
@@ -83,7 +86,7 @@ data class Seats(val rows: List<String>) {
 }
 
 val path = "${Paths.get("").toAbsolutePath()}/input/11.txt"
-val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().toList().let { Seats(it) }
+val puzzleInput = Scanner(FileInputStream(File(path))).asSequence().toList().let(::Seats)
 
 check(2152 == puzzleInput.sequence1().last().count(Seats.OCCUPIED))
 
