@@ -4,44 +4,81 @@ import java.nio.file.Paths
 import java.util.*
 
 // --- Part One ---
-check(71L == solve("1 + 2 * 3 + 4 * 5 + 6".iterator()))
-check(51L == solve("1 + (2 * 3) + (4 * (5 + 6))".iterator()))
-check(26L == solve("2 * 3 + (4 * 5)".iterator()))
-check(437L == solve("5 + (8 * 3 + 9 + 3 * 4 * 3)".iterator()))
-check(12240L == solve("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4)".iterator()))
-check(13632L == solve("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2".iterator()))
+fun String.asEquation() = replace("\\s+".toRegex(), "").iterator()
 
-fun solve(equation: CharIterator): Long {
+check(71L == solve1("1 + 2 * 3 + 4 * 5 + 6".asEquation()))
+check(51L == solve1("1 + (2 * 3) + (4 * (5 + 6))".asEquation()))
+check(26L == solve1("2 * 3 + (4 * 5)".asEquation()))
+check(437L == solve1("5 + (8 * 3 + 9 + 3 * 4 * 3)".asEquation()))
+check(12240L == solve1("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4)".asEquation()))
+check(13632L == solve1("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2".asEquation()))
+
+fun solve1(equation: CharIterator): Long {
     val acc = mutableListOf<Long>()
-    var op = '+'
+    var currentOp = '+'
+
     while (equation.hasNext()) {
         val next = equation.nextChar()
         when (next) {
-            ' ' -> continue
-            '+', '*' -> op = next
-            '(' -> acc += solve(equation)
+            '+', '*' -> currentOp = next
+            '(' -> acc += solve1(equation)
             ')' -> break
             else -> acc += next.toString().toLong()
         }
         if (acc.size == 2) {
             val a = acc.removeLast()
             val b = acc.removeLast()
-            acc += when (op) {
+            acc += when (currentOp) {
                 '*' -> a * b
                 '+' -> a + b
-                else -> error("unknwon $op")
+                else -> error("unknwon $currentOp")
             }
         }
     }
-    return acc.first()
+    return acc.single()
 }
 
-val puzzleInput = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/18.txt")))
+fun getPuzzleInput() = Scanner(FileInputStream(File("${Paths.get("").toAbsolutePath()}/input/18.txt")))
     .useDelimiter(System.lineSeparator())
     .asSequence()
 
-val puzzleAnswer1 = puzzleInput.sumByDouble {
-    solve(it.iterator()).toDouble()
+val puzzleAnswer1 = getPuzzleInput().sumByDouble {
+    solve1(it.asEquation()).toDouble()
 }.toLong()
 
 check(11297104473091L == puzzleAnswer1)
+
+// --- Part Two ---
+check(231L == solve2("1 + 2 * 3 + 4 * 5 + 6".asEquation()))
+check(51L == solve2("1 + (2 * 3) + (4 * (5 + 6))".asEquation()))
+check(46L == solve2("2 * 3 + (4 * 5)".asEquation()))
+check(1445L == solve2("5 + (8 * 3 + 9 + 3 * 4 * 3)".asEquation()))
+check(669060L == solve2("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))".asEquation()))
+check(23340L == solve2("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2".asEquation()))
+
+fun solve2(equation: CharIterator): Long {
+    var tempSum = 0L
+    val toMultiply = mutableListOf<Long>()
+
+    while (equation.hasNext()) {
+        val next = equation.nextChar()
+        when (next) {
+            '*' -> {
+                toMultiply += tempSum
+                tempSum = 0
+            }
+            '+' -> continue
+            '(' -> tempSum += solve2(equation)
+            ')' -> break
+            else -> tempSum += next.toString().toLong()
+        }
+    }
+    toMultiply += tempSum
+    return toMultiply.reduce { acc, i -> acc * i }
+}
+
+val puzzleAnswer2 = getPuzzleInput().sumByDouble {
+    solve2(it.asEquation()).toDouble()
+}.toLong()
+
+check(185348874183674L == puzzleAnswer2)

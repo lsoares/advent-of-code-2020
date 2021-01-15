@@ -31,7 +31,7 @@ fun findMissingBoardingId(input: Sequence<String>) = input
     .sorted()
     .windowed(2)
     .map { it.first() to it[1] - it[0] }
-    .first { it.second != 1 }
+    .single { it.second != 1 }
     .first + 1
 
 check(562 == findMissingBoardingId(getPuzzleInput()))
